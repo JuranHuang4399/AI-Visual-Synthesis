@@ -8,7 +8,7 @@ AI-powered pixel art character generator with story creation.
 
 **Project Setup:**
 
-- ✅ React 18 + Vite + Tailwind CSS v3
+- ✅ React 19 + Vite + Tailwind CSS v3
 - ✅ Cyberpunk color scheme (neon pink, cyan, purple)
 - ✅ React Router 6 navigation
 - ✅ Project structure created
