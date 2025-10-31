@@ -2,9 +2,9 @@
 
 AI-powered pixel art character generator with story creation.
 
-## 📅 Progress Update - October 31, 2025
+## 📅 Progress Update 
 
-### ✅ Completed Today (Frontend)
+### ✅ Completed 
 
 **Project Setup:**
 
@@ -35,7 +35,7 @@ AI-powered pixel art character generator with story creation.
 
 ```
 AI-Story-Creator/
-├── frontend/                    # Frontend (Xuanyou)
+├── frontend/                    # Frontend 
 │   ├── src/
 │   │   ├── pages/              # 4 main pages
 │   │   ├── components/         # Organized by feature
@@ -45,18 +45,18 @@ AI-Story-Creator/
 │   │   │   ├── gallery/       # 🔜 TODO
 │   │   │   ├── profile/       # 🔜 TODO
 │   │   │   └── common/        # ✅ Navbar done
-│   │   ├── services/          # 🔜 TODO (API integration)
+│   │   ├── services/          # 🔜 Developing (API integration)
 │   │   ├── context/           # 🔜 TODO (Auth)
 │   │   └── hooks/             # 🔜 TODO
 │   └── package.json
 │
-└── backend/                    # Backend (Juran)
+└── backend/                    # Backend 
     ├── src/
-    │   ├── models/            # 🔜 TODO
-    │   ├── controllers/       # 🔜 TODO
-    │   ├── routes/            # 🔜 TODO
-    │   ├── services/          # 🔜 TODO (AI integration)
-    │   └── middleware/        # 🔜 TODO
+    │   ├── models/            # 🔜 Developing
+    │   ├── controllers/       # 🔜 Developing
+    │   ├── routes/            # 🔜 Developing
+    │   ├── services/          # 🔜 Developing (AI integration)
+    │   └── middleware/        # 🔜 Developing
     └── package.json
 ```
 
@@ -231,7 +231,7 @@ PUT  /api/users/profile
 VITE_API_URL=http://localhost:5000
 ```
 
-### Backend (.env) - To be created
+### Backend (.env) - Developing
 
 ```
 PORT=5000
@@ -273,7 +273,7 @@ FRONTEND_URL=http://localhost:5173
 ---
 
 **Last Updated:** October 31, 2025  
-**Frontend Status:** Framework complete, ready for API integration  
-**Backend Status:** To be started
+**Frontend Status:** Framework almost complete, ready for API integration  
+**Backend Status:** Developing
 
 ---
