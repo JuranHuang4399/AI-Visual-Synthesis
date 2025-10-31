@@ -1,7 +1,8 @@
 # Let me know if you need an invitation!
 
 ## User Guide:
-To run the image generator locally, create a .env file with your Stability API key
+1. Create a .env file with your Stability API key
+2. Run app.py
 
 ## Installation Reminder:
 ### Flask:
