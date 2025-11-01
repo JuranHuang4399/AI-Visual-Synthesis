@@ -10,6 +10,11 @@ def generate_image(prompt="random image", *, cfg_scale=7, negative_prompt="", fi
         "prompt": prompt,                       # User description of the image
         "cfg_scale" : cfg_scale,                # Strict level to follow user's prompt
         "negative_prompt" : negative_prompt,    # Elements excluded from the image
+
+        "aspect_ratio": "1:1",                  # Output shape (e.g. "1:1", "16:9", "9:16", "3:2")
+        "output_format": "jpeg",                # jpeg | png | webp
+        "output_quality": 90,                   # 1–100, for jpeg/webp quality
+        "style_preset": "photographic",         # e.g. "anime", "cinematic", "digital-art", "fantasy-art"
     }
     response = requests.post(
         "https://api.stability.ai/v2beta/stable-image/generate/sd3",
