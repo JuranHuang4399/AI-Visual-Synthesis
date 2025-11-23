@@ -1,4 +1,4 @@
-from stable_diffusion_api import generate_image
+from backend.stable_diffusion_api import generate_image
 
 """
 Main Parameter:
