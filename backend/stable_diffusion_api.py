@@ -1,9 +1,39 @@
+import base64
 import os
 import requests
 from dotenv import load_dotenv
 
 load_dotenv()
 stable_diffusion_key = os.getenv('SDF_KEY')
+pixel_lab_key = os.getenv('PIXELLAB_KEY')
+
+def generate_pixel_art(description="random image", *, image_width=128, image_length=128, detail="medium detail",
+                       direction=None, no_background=False, filename="pixel_generation.jpeg"):
+    data = {
+        "description" : description,
+        "image_size" : { "width" : image_width, "height" : image_length},
+        "detail" : detail,
+        "direction" : direction,
+        "no_background" : no_background,
+    }
+    response = requests.post(
+        "https://api.pixellab.ai/v1/generate-image-pixflux",
+        headers={
+            "Authorization": f"Bearer {pixel_lab_key}",         # Authorized with api key
+            "Content-Type": "application/json"                                    # Requesting images
+        },
+        json=data,
+    )
+
+    if response.status_code == 200:
+        resp_json = response.json()
+        base64_img = resp_json["image"]["base64"]
+        img_bytes = base64.b64decode(base64_img)
+        with open(filename, "wb") as f:
+            f.write(img_bytes)
+        return filename
+
+    raise Exception(str(response.json()))
 
 def generate_image(prompt="random image", *, cfg_scale=7, negative_prompt="", filename="demo_generation.jpeg"):
     data = {

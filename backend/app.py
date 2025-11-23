@@ -1,4 +1,4 @@
-from backend.stable_diffusion_api import generate_image
+from backend.stable_diffusion_api import generate_image, generate_pixel_art
 
 """
 Main Parameter:
@@ -11,4 +11,5 @@ Other Parameters (must be passed as keyword arguments):
 """
 
 # Dummy prompt and parameters until user input function is completed
-generate_image("castle in the sky", cfg_scale=10, negative_prompt="Dark sky")
+# generate_image("castle in the sky", cfg_scale=10, negative_prompt="Dark sky")
+generate_pixel_art("undead knight")
