@@ -45,17 +45,17 @@ AI-Story-Creator/
 │   │   │   ├── gallery/       # 🔜 TODO
 │   │   │   ├── profile/       # 🔜 TODO
 │   │   │   └── common/        # ✅ Navbar done
-│   │   ├── services/          # 🔜 Developing (API integration)
+│   │   ├── services/          # ✅ Developing (API integration)
 │   │   ├── context/           # 🔜 TODO (Auth)
-│   │   └── hooks/             # 🔜 TODO
+│   │   └── hooks/             # ✅ complete
 │   └── package.json
 │
 └── backend/                    # Backend 
     ├── src/
-    │   ├── models/            # 🔜 Developing
+    │   ├── models/            # ✅ Developing
     │   ├── controllers/       # 🔜 Developing
     │   ├── routes/            # 🔜 Developing
-    │   ├── services/          # 🔜 Developing (AI integration)
+    │   ├── services/          # ✅ Developing (AI integration)
     │   └── middleware/        # 🔜 Developing
     └── package.json
 ```
