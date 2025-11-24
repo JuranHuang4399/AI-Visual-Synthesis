@@ -1,20 +1,20 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 function ImageCard({ image, index }) {
   const [isHovered, setIsHovered] = useState(false);
-  
+
   return (
-    <div 
+    <div
       className="relative aspect-square bg-cyber-dark-200 rounded-lg overflow-hidden group cursor-pointer neon-border-cyan"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <img 
-        src={image.url} 
+      <img
+        src={image.url}
         alt={`Frame ${index + 1}`}
-        className="w-full h-full object-cover"
+        className="w-full h-full object-contain"
       />
-      
+
       {/* Hover Overlay */}
       {isHovered && (
         <div className="absolute inset-0 bg-black bg-opacity-70 flex flex-col items-center justify-center">

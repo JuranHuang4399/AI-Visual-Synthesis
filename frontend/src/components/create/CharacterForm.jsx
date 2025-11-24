@@ -72,7 +72,7 @@ function CharacterForm({ onSubmit, isLoading }) {
         value={formData.appearance}
         onChange={handleChange}
         placeholder="Describe hair color, eye color, outfit, etc."
-        rows={4}
+        rows={2}
       />
 
       {/* Special Features */}
@@ -82,7 +82,7 @@ function CharacterForm({ onSubmit, isLoading }) {
         value={formData.specialFeatures}
         onChange={handleChange}
         placeholder="Any special features: scars, tattoos, magical effects, etc."
-        rows={3}
+        rows={2}
       />
 
       {/* Image Count */}

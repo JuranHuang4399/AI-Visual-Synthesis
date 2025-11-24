@@ -1,4 +1,4 @@
-import ImageCard from './ImageCard';
+import ImageCard from "./ImageCard";
 
 function ImageGrid({ images = [] }) {
   if (!images || images.length === 0) {
@@ -8,21 +8,23 @@ function ImageGrid({ images = [] }) {
       </div>
     );
   }
-  
-  const gridCols = images.length <= 4 ? 'grid-cols-2' : 'grid-cols-3';
-  
+
+  // Fixed responsive display
+  const baseCols =
+    images.length <= 4
+      ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-2"
+      : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
+
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-cyber-cyan">Generated Pixel Art</h3>
-      
-      {/* Image Grid */}
-      <div className={`grid ${gridCols} gap-4`}>
+      <h3 className="text-lg font-semibold text-cyber-cyan">
+        Generated Pixel Art
+      </h3>
+
+      {/* Responsive Grid */}
+      <div className={`grid ${baseCols} gap-4`}>
         {images.map((image, index) => (
-          <ImageCard 
-            key={index}
-            image={image}
-            index={index}
-          />
+          <ImageCard key={index} image={image} index={index} />
         ))}
       </div>
     </div>
