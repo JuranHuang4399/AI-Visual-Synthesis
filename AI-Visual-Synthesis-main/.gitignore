@@ -40,8 +40,19 @@ Thumbs.db
 UnityHubSetup.dmg
 *.dmg
 *.ipynb
+*.ipynb.zip
 Visual Studio Code.app/
 *.app/
+
+# Unrelated personal files
+$RECYCLE.BIN/
+desktop.ini
+.localized
+.~*
+*.docx
+*.pptx
+cs6140*
+fp.ipynb*
 
 # Logs
 *.log
