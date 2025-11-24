@@ -36,6 +36,13 @@ yarn-error.log*
 ehthumbs.db
 Thumbs.db
 
+# Large files that shouldn't be in repo
+UnityHubSetup.dmg
+*.dmg
+*.ipynb
+Visual Studio Code.app/
+*.app/
+
 # Logs
 *.log
 logs/
