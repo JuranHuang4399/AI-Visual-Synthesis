@@ -1,4 +1,4 @@
-from backend.stable_diffusion_api import generate_image, generate_pixel_art
+from backend.pixellab_api import generate_image, generate_pixel_art
 
 """
 Main Parameter:
@@ -9,7 +9,7 @@ Other Parameters (must be passed as keyword arguments):
   negative_prompt (str, optional): Elements to avoid (default empty)
   filename (str, optional): Output file name (default 'demo_generation.jpeg')
 """
+## 当前测试用，因为api key有使用上限，慎用。##
 
-# Dummy prompt and parameters until user input function is completed
 # generate_image("castle in the sky", cfg_scale=10, negative_prompt="Dark sky")
-generate_pixel_art("undead knight")
+# generate_pixel_art("undead knight")
