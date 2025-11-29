@@ -10,6 +10,20 @@ pip install flask
 pip install requests
 ### Dotenv
 pip install python-dotenv
+### huggingface
+pip install huggingface_hub
+
+## For Developers:
+Before you run the frontend, run Flask backend first:
+cd AI-Story-Creator
+python backend/server.py
+
+Backend will run at:
+http://localhost:5000
+
+Frontend can call these two endpoints:
+POST /generate_art
+POST /generate_story
 
 # 🎮 AI Story Creator
 
