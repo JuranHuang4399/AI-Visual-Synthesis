@@ -4,48 +4,58 @@ import GeneratingLoader from "../components/result/GeneratingLoader";
 import ImageGrid from "../components/result/ImageGrid";
 import StoryDisplay from "../components/result/StoryDisplay";
 import ActionButtons from "../components/result/ActionButtons";
+import { generateCharacter } from "../services/api";
 
 function CreateResultPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedData, setGeneratedData] = useState(null);
 
   // Mock data for testing
-  const mockImages = [
-    { url: "https://via.placeholder.com/256x256/ff006e/ffffff?text=Frame+1" },
-    { url: "https://via.placeholder.com/256x256/bd00ff/ffffff?text=Frame+2" },
-    { url: "https://via.placeholder.com/256x256/00d9ff/ffffff?text=Frame+3" },
-    { url: "https://via.placeholder.com/256x256/ffea00/000000?text=Frame+4" },
-  ];
 
   const handleGenerate = async (formData) => {
     console.log("Generating character with data:", formData);
     setIsGenerating(true);
+    try {
+      const result = await generateCharacter(formData);
 
-    // Simulate API call
-    setTimeout(() => {
       setGeneratedData({
         name: formData.name,
-        images: mockImages,
-        story: `${formData.name} was born in the mystical realm of ${
-          formData.characterClass
-        }s. 
-        Known for being ${
-          formData.personality
-        }, this legendary hero has faced countless battles. 
-        Their appearance is striking: ${formData.appearance}. 
-        ${
-          formData.specialFeatures
-            ? `What makes them truly unique: ${formData.specialFeatures}.`
-            : ""
-        }
-        
-        Through determination and skill, ${
-          formData.name
-        } has become a legend among heroes.`,
+        images: result.images.map((url) => ({ url })), // use ImageGrid
+        story: result.story,
       });
-      setIsGenerating(false);
-    }, 3000);
+    } catch (error) {
+      console.error("Error generating character:", error);
+      alert("Failed to generate character. Check backend status.");
+    }
+
+    setIsGenerating(false);
   };
+
+  //   // Simulate API call
+  //   setTimeout(() => {
+  //     setGeneratedData({
+  //       name: formData.name,
+  //       images: mockImages,
+  //       story: `${formData.name} was born in the mystical realm of ${
+  //         formData.characterClass
+  //       }s.
+  //       Known for being ${
+  //         formData.personality
+  //       }, this legendary hero has faced countless battles.
+  //       Their appearance is striking: ${formData.appearance}.
+  //       ${
+  //         formData.specialFeatures
+  //           ? `What makes them truly unique: ${formData.specialFeatures}.`
+  //           : ""
+  //       }
+
+  //       Through determination and skill, ${
+  //         formData.name
+  //       } has become a legend among heroes.`,
+  //     });
+  //     setIsGenerating(false);
+  //   }, 3000);
+  // };
 
   const handleDownloadAll = () => {
     console.log("Downloading all images...");

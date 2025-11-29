@@ -15,32 +15,109 @@ pip install python-dotenv
 
 AI-powered pixel art character generator with story creation.
 
-## 📅 Progress Update 
+---
 
-### ✅ Completed 
+## 📅 Progress Update - November 23, 2025
+
+### ✅ Completed Today (Backend + Frontend Integration + Testing)
+
+#### 🧠 Backend (Python Flask) — First Working Version Completed
+
+**New Features:**
+
+- ✅ Full Flask backend created (`/backend`)
+- ✅ CORS enabled for frontend connection
+- ✅ Stable Diffusion 3 API integration
+- ✅ Multi-image generation
+  - 1 image → front
+  - 4 images → front/back/left/right
+  - 8 images → +4 diagonal directions
+- ✅ AI story generation placeholder added
+- ✅ Returns:
+  - Base64 image array
+  - Story string
+- ✅ Error handling for missing credits / invalid request
+
+**API Endpoint:**
+
+```
+POST /api/characters/generate
+```
+
+**Backend Output Example:**
+
+```json
+{
+  "images": ["data:image/jpeg;base64, ..."],
+  "story": "Astra is a Mage characterized by Calm..."
+}
+```
+
+---
+
+#### ⚛️ Frontend Integration Completed
+
+**Changes:**
+
+- Connected CreateResultPage → real backend
+- Replaced mock data with live API responses
+- Loader animation works during generation
+- ImageGrid now displays generated frames
+- ImageCard uses real base64 images (with hover overlay)
+
+---
+
+#### 🖼️ ImageGrid Improvements
+
+- Better responsive layout:
+  - 1–4 images → 2 columns
+  - 8 images → 3 columns
+- Images now use `object-contain`
+- Prevents cropping and matches pixel-art style
+
+---
+
+#### 🧪 Added Full Frontend Test Suite
+
+New tests added under `src/tests/`:
+
+| File                      | Description                                 |
+| ------------------------- | ------------------------------------------- |
+| `test_api.js`             | Basic backend connectivity                  |
+| `test_generate_images.js` | Tests 1/4/8 image generation result         |
+| `test_character_form.jsx` | Form input + dropdown + loading + submit    |
+| `test_create_result.jsx`  | Loader → result state transition            |
+| `test_image_grid.jsx`     | Grid layout and image count test            |
+| `test_image_card.jsx`     | Hover overlay + button + image rendering    |
+| `test_api_mock.js`        | Mock API without hitting backend (optional) |
+| `test_navbar.jsx`         | Navbar active link tests (待写)             |
+
+All API tests now pass once credits are active.
+
+---
+
+#### 🛠️ Completed Frontend (From Previous Update)
 
 **Project Setup:**
 
-- ✅ React 19 + Vite + Tailwind CSS v3
-- ✅ Cyberpunk color scheme (neon pink, cyan, purple)
-- ✅ React Router 6 navigation
-- ✅ Project structure created
+- React 18 + Vite + Tailwind CSS v3
+- Cyberpunk color scheme (neon pink, cyan, purple)
+- React Router 6 navigation
+- Project structure complete
 
-**Pages Built:**
+**Pages:**
 
-- ✅ HomePage - Hero, Features, Showcase, Footer
-- ✅ CreateResultPage - Form + Result display (split view)
-- ✅ GalleryPage - Placeholder
-- ✅ ProfilePage - Placeholder
+- HomePage
+- CreateResultPage (now fully integrated with backend)
+- GalleryPage (placeholder)
+- ProfilePage (placeholder)
 
-**Components Built:**
+**Components:**
 
-- ✅ Navbar with active link highlighting
-- ✅ Home components (Hero, Features, Showcase, Footer)
-- ✅ Form components (CharacterForm, FormInput, FormTextarea, GenerateButton)
-- ✅ Result components (ImageGrid, ImageCard, StoryDisplay, ActionButtons, GeneratingLoader)
-
-**Status:** Frontend framework complete with mock data. Ready for API integration.
+- Navbar
+- Home (Hero, Features, Showcase, Footer)
+- Form (CharacterForm, FormInput, FormTextarea, GenerateButton)
+- Result (ImageGrid, ImageCard, StoryDisplay, ActionButtons, GeneratingLoader)
 
 ---
 
@@ -48,29 +125,30 @@ AI-powered pixel art character generator with story creation.
 
 ```
 AI-Story-Creator/
-├── frontend/                    # Frontend 
+├── frontend/                    # Frontend
 │   ├── src/
 │   │   ├── pages/              # 4 main pages
 │   │   ├── components/         # Organized by feature
-│   │   │   ├── home/          # ✅ Complete
-│   │   │   ├── create/        # ✅ Complete
-│   │   │   ├── result/        # ✅ Complete
-│   │   │   ├── gallery/       # 🔜 TODO
-│   │   │   ├── profile/       # 🔜 TODO
-│   │   │   └── common/        # ✅ Navbar done
-│   │   ├── services/          # 🔜 Developing (API integration)
-│   │   ├── context/           # 🔜 TODO (Auth)
-│   │   └── hooks/             # 🔜 TODO
+│   │   │   ├── home/           # ✅ Complete
+│   │   │   ├── create/         # ✅ Complete
+│   │   │   ├── result/         # ✅ Complete
+│   │   │   ├── gallery/        # 🔜 TODO
+│   │   │   ├── profile/        # 🔜 TODO
+│   │   │   └── common/         # ✅ Navbar done
+│   │   ├── services/           # 🔜 Developing (API integration)
+│   │   ├── context/            # 🔜 TODO (Auth)
+│   │   └── hooks/              # 🔜 TODO
 │   └── package.json
 │
-└── backend/                    # Backend 
-    ├── src/
-    │   ├── models/            # 🔜 Developing
-    │   ├── controllers/       # 🔜 Developing
-    │   ├── routes/            # 🔜 Developing
-    │   ├── services/          # 🔜 Developing (AI integration)
-    │   └── middleware/        # 🔜 Developing
-    └── package.json
+└── backend/                     # Backend
+    ├── server.py
+    ├── stable_diffusion_api.py
+    └── (future structure)
+        ├── models/             # 🔜 Developing
+        ├── controllers/        # 🔜 Developing
+        ├── routes/             # 🔜 Developing
+        ├── services/           # ✅ Complete (AI integration)
+        └── middleware/         # 🔜 Developing
 ```
 
 ---
@@ -85,208 +163,154 @@ npm install
 npm run dev
 ```
 
-**Runs on:** http://localhost:5173
+Runs on → http://localhost:5173
 
-**Pages available:**
+---
 
-- `/` - Home page
-- `/create` - Character creation (with mock data)
-- `/gallery` - Gallery (placeholder)
-- `/profile` - Profile (placeholder)
-
-### Backend (To be implemented)
+### Backend (Python Flask)
 
 ```bash
 cd backend
-npm install
-npm run dev
+python3 -m venv .venv
+source .venv/bin/activate
+pip install flask requests python-dotenv
+python server.py
 ```
 
-**Will run on:** http://localhost:5000
+Runs on → http://localhost:5000
 
 ---
 
 ## 🎨 Design Theme
 
-**Cyberpunk / Neon Style**
+**Cyberpunk / Neon:**
 
-- Dark backgrounds: `#0a0e27`, `#1a1a2e`
-- Neon pink: `#ff006e`
-- Neon cyan: `#00d9ff`
-- Neon purple: `#bd00ff`
-- Grid background pattern
-- Glow effects on hover
+- Dark bg: `#0a0e27`, `#1a1a2e`
+- Pink: `#ff006e`
+- Cyan: `#00d9ff`
+- Purple: `#bd00ff`
+
+Includes grid backgrounds + glow effects.
 
 ---
 
 ## 👥 Team Division
 
-### Frontend
+### Frontend (Xuanyou)
 
 **Completed:**
 
-- Project setup and configuration
-- All page layouts
-- Home page components
-- Create/Result page components
-- Cyberpunk styling
+- All pages & layouts
+- All UI components
+- Tailwind cyberpunk design
+- Connected to backend
+- ImageGrid & Create page refinement
+- Full test suite
 
-**Next Steps:**
+**Next:**
 
-- Gallery page components
-- Profile page components
-- API service layer
-- Authentication context
-- Connect to backend APIs
-
-### Backend
-
-**To Do:**
-
-- Setup Express server
-- MongoDB models (User, Character)
-- Authentication (JWT)
-- Character generation endpoints
-- AI integration (OpenAI + Replicate)
-- Image storage/processing
+- Gallery page
+- Profile page
+- ZIP download
+- Save to gallery API
 
 ---
 
-## 📡 API Endpoints Needed
+### Backend (Juran)
 
-### Authentication(Google..)
+**Completed:**
 
+- Flask backend
+- Stable Diffusion integration
+- Multi-image generation
+- Error handling
+
+**Next:**
+
+- Switching from mock story to GPT-4
+- Character saving
+- ZIP generator
+- User profiles
+- Auth (JWT / OAuth optional)
+- Gallery endpoints
+
+---
+
+## 📡 API Contract (Updated Today)
+
+**POST** `/api/characters/generate`
+
+**Request:**
+
+```json
+{
+  "name": "string",
+  "characterClass": "string",
+  "personality": "string",
+  "appearance": "string",
+  "specialFeatures": "string",
+  "imageCount": 1 | 4 | 8
+}
 ```
-POST /api/auth/register
-POST /api/auth/login
-GET  /api/auth/me
-```
 
-### Characters(example)
+**Response:**
 
-```
-POST /api/characters/generate
-  Body: {
-    name: string,
-    characterClass: string,
-    personality: string,
-    appearance: string,
-    specialFeatures: string,
-    imageCount: number
-  }
-  Response: {
-    id: string,
-    name: string,
-    images: [{url: string}],
-    story: string
-  }
-
-GET  /api/characters          # Get user's characters
-GET  /api/characters/:id      # Get specific character
-GET  /api/characters/:id/download  # Download ZIP
-DELETE /api/characters/:id    # Delete character
-```
-
-### Users
-
-```
-GET  /api/users/profile
-PUT  /api/users/profile
+```json
+{
+  "images": ["data:image/jpeg;base64,..."],
+  "story": "string"
+}
 ```
 
 ---
 
-## 🗄️ Data Models(example)
+## 🗄️ Data Models (Planned)
 
-### User Model
+### User
 
-```javascript
-{
-  username: String,
-  email: String,
-  password: String (hashed),
-  createdAt: Date
-}
-```
+- `username`
+- `email`
+- `password`
+- `createdAt`
 
-### Character Model(example)
+### Character
 
-```javascript
-{
-  userId: ObjectId (ref: User),
-  input: {
-    name: String,
-    characterClass: String,
-    personality: String,
-    appearance: String,
-    specialFeatures: String,
-    imageCount: Number
-  },
-  generated: {
-    images: [{
-      url: String,
-      index: Number
-    }],
-    story: String
-  },
-  status: String (generating/completed/failed),
-  createdAt: Date
-}
-```
+- `input`: { name, class, traits, appearance, ... }
+- `generated`: { images[], story }
+- `createdAt`
 
 ---
 
 ## 🔧 Environment Variables
 
-### Frontend (.env)
+### Frontend `.env`
 
-```
+```env
 VITE_API_URL=http://localhost:5000
 ```
 
-### Backend (.env) - Developing
+### Backend `.env`
 
-```
+```env
+SDF_KEY=your_stability_ai_key
 PORT=5000
-MONGODB_URI=mongodb://localhost:27017/ai-story-creator(Optional)
-JWT_SECRET=your_secret_key_here
-OPENAI_API_KEY=your_openai_key
-REPLICATE_API_KEY=your_replicate_key
-FRONTEND_URL=http://localhost:5173
 ```
 
 ---
 
-## 📝 Next Meeting Discussion
+## 📝 Next Steps
 
-1. **API Contract** - Confirm request/response formats
-2. **MongoDB Setup** - Local or Atlas?
-3. **AI API Keys** - Who will create accounts?
-4. **Timeline** - Week by week plan
-5. **Testing Strategy** - How to test integration?
+1. Gallery system
+2. Save to backend
+3. Download ZIP feature
+4. Add GPT-4 for story generation
+5. Add Navbar tests
+6. Improve UI scaling on Create page
 
 ---
 
 ## 🔗 Useful Links
 
-- Frontend: http://localhost:5173
-- Backend: http://localhost:5000 (when ready)
-- GitHub: https://github.com/JuranHuang4399/AI-Story-Creator
-
----
-
-## 💡 Notes
-
-- Frontend is using **mock data** for now
-- Form submission works but calls fake API
-- Need to replace mock data with real API calls
-- Character images use placeholder images
-- Download/Save buttons show alerts (not functional yet)
-
----
-
-**Last Updated:** October 31, 2025  
-**Frontend Status:** Framework almost complete, ready for API integration  
-**Backend Status:** Developing
-
----
+- Frontend → http://localhost:5173
+- Backend → http://localhost:5000
+- GitHub → https://github.com/JuranHuang4399/AI-Story-Creator

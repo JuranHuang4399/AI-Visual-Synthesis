@@ -1,0 +1,45 @@
+# === Python ===
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.py[cod]
+*$py.class
+
+# === Virtual Environment ===
+.venv/
+venv/
+env/
+
+# === Environment Variables ===
+.env
+.env.local
+.env.*.local
+
+# === IDE / Editor ===
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# === macOS Files ===
+.DS_Store
+
+# === Logs ===
+*.log
+logs/
+*.out
+
+# === Generated images ===
+generated*.jpeg
+output/
+images/
+tmp/
+
+# === Python packaging ===
+build/
+dist/
+*.egg-info/
+
+# === Flask instance folders ===
+instance/
