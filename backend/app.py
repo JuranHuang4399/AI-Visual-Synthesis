@@ -1,0 +1,15 @@
+from backend.pixellab_api import generate_image, generate_pixel_art
+
+"""
+Main Parameter:
+  prompt (str): Text description for the image
+
+Other Parameters (must be passed as keyword arguments):  
+  cfg_scale (int, optional): Controls prompt adherence (default 7)
+  negative_prompt (str, optional): Elements to avoid (default empty)
+  filename (str, optional): Output file name (default 'demo_generation.jpeg')
+"""
+## 当前测试用，因为api key有使用上限，慎用。##
+
+# generate_image("castle in the sky", cfg_scale=10, negative_prompt="Dark sky")
+# generate_pixel_art("undead knight")

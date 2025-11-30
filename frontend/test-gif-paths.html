@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIF路径测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #0a0e27;
+            color: #00d9ff;
+            padding: 20px;
+        }
+        .test-item {
+            margin: 20px 0;
+            padding: 15px;
+            background: #1a1a2e;
+            border: 2px solid #00d9ff;
+            border-radius: 8px;
+        }
+        .gif-preview {
+            margin-top: 10px;
+            max-width: 200px;
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            margin-left: 10px;
+        }
+        .success {
+            background: #00ff00;
+            color: #000;
+        }
+        .error {
+            background: #ff0000;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎬 GIF文件路径测试</h1>
+    <p>检查GIF文件是否能正确加载...</p>
+    
+    <div class="test-item">
+        <h3>测试 1: 80S Pixel Art GIF.gif</h3>
+        <p>路径: <code>/gifs/80S Pixel Art GIF.gif</code></p>
+        <div id="status1" class="status">检查中...</div>
+        <img 
+            src="/gifs/80S Pixel Art GIF.gif" 
+            alt="80S Pixel Art GIF"
+            class="gif-preview"
+            onload="document.getElementById('status1').innerHTML = '✅ 加载成功'; document.getElementById('status1').className = 'status success';"
+            onerror="document.getElementById('status1').innerHTML = '❌ 加载失败'; document.getElementById('status1').className = 'status error';"
+        />
+    </div>
+    
+    <div class="test-item">
+        <h3>测试 2: Pixel Art GIF.gif</h3>
+        <p>路径: <code>/gifs/Pixel Art GIF.gif</code></p>
+        <div id="status2" class="status">检查中...</div>
+        <img 
+            src="/gifs/Pixel Art GIF.gif" 
+            alt="Pixel Art GIF"
+            class="gif-preview"
+            onload="document.getElementById('status2').innerHTML = '✅ 加载成功'; document.getElementById('status2').className = 'status success';"
+            onerror="document.getElementById('status2').innerHTML = '❌ 加载失败'; document.getElementById('status2').className = 'status error';"
+        />
+    </div>
+    
+    <div class="test-item">
+        <h3>测试 3: pixel GIF by haydiroket (Mert Keskin).gif</h3>
+        <p>路径: <code>/gifs/pixel GIF by haydiroket (Mert Keskin).gif</code></p>
+        <div id="status3" class="status">检查中...</div>
+        <img 
+            src="/gifs/pixel GIF by haydiroket (Mert Keskin).gif" 
+            alt="pixel GIF by haydiroket"
+            class="gif-preview"
+            onload="document.getElementById('status3').innerHTML = '✅ 加载成功'; document.getElementById('status3').className = 'status success';"
+            onerror="document.getElementById('status3').innerHTML = '❌ 加载失败'; document.getElementById('status3').className = 'status error';"
+        />
+    </div>
+    
+    <div class="test-item">
+        <h3>📋 测试结果总结</h3>
+        <p>如果所有GIF都显示"✅ 加载成功"，说明路径配置正确！</p>
+        <p>如果显示"❌ 加载失败"，请检查：</p>
+        <ul>
+            <li>GIF文件是否在 <code>frontend/public/gifs/</code> 目录</li>
+            <li>文件名是否完全匹配（包括大小写和空格）</li>
+            <li>开发服务器是否正在运行</li>
+        </ul>
+    </div>
+</body>
+</html>
+
