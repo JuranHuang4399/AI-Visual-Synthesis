@@ -618,15 +618,14 @@ storage/directories/
 
 ## 📝 Notes
 
-- All code comments are in English
-- Character images are stored locally (can be migrated to cloud storage)
+- Character images are stored locally (can be migrated to cloud storage, eg.Cloudinary)
 - GIF generation uses Pillow with optimized settings to prevent ghosting
 - The system includes retry mechanisms for API rate limits
 - All API responses include proper error handling
 
 ---
 
-**Last Updated:** December 2024  
+**Last Updated:** December 2025  
 **Frontend Status:** ✅ Complete and optimized  
 **Backend Status:** ✅ Complete and production-ready
 
