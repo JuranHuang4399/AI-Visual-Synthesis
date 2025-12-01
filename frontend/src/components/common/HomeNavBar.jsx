@@ -38,6 +38,36 @@ function HomeNavBar() {
             </span>
           </Link>
 
+          {/* Navigation Links - Display after login */}
+          {isAuthenticated && (
+            <div className="flex space-x-6">
+              <Link
+                to="/"
+                className="px-4 py-2 rounded-lg font-semibold transition-all text-white hover:text-cyber-cyan"
+              >
+                Home
+              </Link>
+              <Link
+                to="/create"
+                className="px-4 py-2 rounded-lg font-semibold transition-all text-white hover:text-cyber-cyan"
+              >
+                Create
+              </Link>
+              <Link
+                to="/characters"
+                className="px-4 py-2 rounded-lg font-semibold transition-all text-white hover:text-cyber-cyan"
+              >
+                Characters
+              </Link>
+              <Link
+                to="/profile"
+                className="px-4 py-2 rounded-lg font-semibold transition-all text-white hover:text-cyber-cyan"
+              >
+                Profile
+              </Link>
+            </div>
+          )}
+
           {/* User section */}
           <div className="flex items-center space-x-4">
             {isAuthenticated && user ? (

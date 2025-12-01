@@ -1,122 +1,301 @@
-## User Guide:
+# 🎮 AI Visual Synthesis
 
-1. Create a .env file with your Stability API key
-2. Run app.py
+AI-powered pixel art character generator with story creation and animation support.
 
-## Installation Reminder:
-### Flask:
-pip install flask
-### Requests:
-pip install requests
-### Dotenv
-pip install python-dotenv
-### huggingface
-pip install huggingface_hub
+---
 
-## For Developers:
-Before you run the frontend, run Flask backend first:
-cd AI-Story-Creator
-python backend/server.py
+## 🚀 Quick Start
 
-Backend will run at:
-http://localhost:5000
+### Prerequisites
 
-Frontend can call these two endpoints:
-POST /generate_art
-POST /generate_story
+- Python 3.12+
+- Node.js 18+
+- MongoDB (local or Atlas)
+- PixelLab API key
+- HuggingFace API token
 
-# 🎮 AI Story Creator
+### Backend Setup
 
-AI-powered pixel art character generator with story creation.
+1. **Navigate to backend directory:**
+   ```bash
+   cd backend
+   ```
 
-## 📅 Progress Update 
+2. **Create virtual environment:**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
 
-### ✅ Completed 
+3. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-**Project Setup:**
+4. **Create `.env` file:**
+   ```bash
+   cp .env.example .env  # Or create manually
+   ```
 
+5. **Configure environment variables in `.env`:**
+   ```env
+   # Flask Configuration
+   FLASK_APP=app.py
+   FLASK_ENV=development
+   PORT=5000
+
+   # MongoDB Configuration
+   MONGODB_URI=mongodb://localhost:27017/ai-visual-synthesis
+
+   # API Keys
+   PIXELLAB_API_KEY=your_pixellab_api_key_here
+   HUGGINGFACE_API_TOKEN=your_huggingface_token_here
+
+   # Storage Configuration
+   STORAGE_BASE_PATH=./storage/directories
+   STATIC_URL_PREFIX=/static
+   ```
+
+6. **Start the backend server:**
+   ```bash
+   python app.py
+   ```
+
+   Backend will run at: **http://localhost:5000**
+
+### Frontend Setup
+
+1. **Navigate to frontend directory:**
+   ```bash
+   cd frontend
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Create `.env` file (optional, defaults to localhost:5000):**
+   ```env
+   VITE_API_URL=http://localhost:5000
+   ```
+
+4. **Start the development server:**
+   ```bash
+   npm run dev
+   ```
+
+   Frontend will run at: **http://localhost:5173**
+
+## 📋 For Developers
+
+### Project Architecture
+
+**Backend (Flask):**
+- **Framework:** Flask 3.0+ with RESTful API
+- **Database:** MongoDB with MongoEngine ODM
+- **External APIs:** PixelLab (pixel art generation), HuggingFace (story generation)
+- **Storage:** Local file system for images and GIFs
+- **Structure:**
+  - `app.py` - Application entry point
+  - `api/v1/routes/` - API route handlers
+  - `core/services/` - Business logic layer
+  - `integrations/clients/` - External API clients
+  - `database/models/` - MongoDB models
+  - `storage/` - File management and ZIP generation
+  - `utils/` - Utilities (GIF generation, validators, exceptions)
+
+**Frontend (React):**
+- **Framework:** React 19 + Vite
+- **Styling:** Tailwind CSS v3 with custom cyberpunk theme
+- **Routing:** React Router 6
+- **Structure:**
+  - `pages/` - Main page components
+  - `components/` - Reusable components organized by feature
+    - `common/` - Shared components (PageLayout, NavBar, BackButton, AnimatedBackground)
+    - `create/` - Character creation form components
+    - `character/` - Character display components
+    - `result/` - Result display components
+    - `home/` - Homepage components
+    - `login/` - Login page components
+
+### Key Features
+
+**Character Generation:**
+- 8-directional sprite generation (north, south, east, west, and diagonals)
+- Character DNA extraction for consistency
+- Master Reference Image strategy for animation consistency
+- Automatic GIF generation for rotating sprites
+
+**Animation System:**
+- Support for multiple animation types (walk, run, jump, attack)
+- Direction-based animation generation
+- Automatic GIF creation for animation sequences
+- Frame-by-frame animation management
+
+**Story Generation:**
+- AI-powered story generation using Meta Llama (HuggingFace)
+- Character-based narrative creation
+- Story display and management
+
+**Download & Export:**
+- Individual image downloads
+- Complete character package export (images + story)
+- ZIP file generation with organized folder structure
+
+## 📅 Project Status
+
+### ✅ Completed Features
+
+**Backend:**
+- ✅ Flask RESTful API with MongoDB integration
+- ✅ PixelLab API integration for pixel art generation
+- ✅ HuggingFace API integration for story generation
+- ✅ 8-directional character sprite generation
+- ✅ Animation frame generation (walk, run, jump, attack)
+- ✅ GIF generation and optimization
+- ✅ Character consistency system (Character DNA + Master Reference Image)
+- ✅ File storage and management
+- ✅ ZIP export functionality
+- ✅ Error handling and retry mechanisms
+- ✅ CORS configuration
+- ✅ Static file serving
+
+**Frontend:**
 - ✅ React 19 + Vite + Tailwind CSS v3
-- ✅ Cyberpunk color scheme (neon pink, cyan, purple)
+- ✅ Cyberpunk/neon design theme
 - ✅ React Router 6 navigation
-- ✅ Project structure created
+- ✅ HomePage with hero, features, showcase, and footer
+- ✅ Character creation page with form and result display
+- ✅ Characters gallery page
+- ✅ Character detail page with sprite preview and direction frames
+- ✅ Profile page
+- ✅ Login page
+- ✅ Reusable components (PageLayout, FormField, etc.)
+- ✅ Animated background system
+- ✅ Image rotation display
+- ✅ Story display component
+- ✅ Download and export functionality
 
-**Pages Built:**
-
-- ✅ HomePage - Hero, Features, Showcase, Footer
-- ✅ CreateResultPage - Form + Result display (split view)
-- ✅ GalleryPage - Placeholder
-- ✅ ProfilePage - Placeholder
-
-**Components Built:**
-
-- ✅ Navbar with active link highlighting
-- ✅ Home components (Hero, Features, Showcase, Footer)
-- ✅ Form components (CharacterForm, FormInput, FormTextarea, GenerateButton)
-- ✅ Result components (ImageGrid, ImageCard, StoryDisplay, ActionButtons, GeneratingLoader)
-
-**Status:** Frontend framework complete with mock data. Ready for API integration.
+**Code Quality:**
+- ✅ All comments translated to English
+- ✅ Removed unused code and files
+- ✅ Improved component reusability
+- ✅ Optimized performance (GPU acceleration, lazy loading)
 
 ---
 
 ## 🏗️ Project Structure
 
 ```
-AI-Story-Creator/
-├── frontend/                    # Frontend 
+AI-Visual-Synthesis/
+├── frontend/                           # React Frontend
 │   ├── src/
-│   │   ├── pages/              # 4 main pages
-│   │   ├── components/         # Organized by feature
-│   │   │   ├── home/          # ✅ Complete
-│   │   │   ├── create/        # ✅ Complete
-│   │   │   ├── result/        # ✅ Complete
-│   │   │   ├── gallery/       # 🔜 TODO
-│   │   │   ├── profile/       # 🔜 TODO
-│   │   │   └── common/        # ✅ Navbar done
-│   │   ├── services/          # 🔜 Developing (API integration)
-│   │   ├── context/           # 🔜 TODO (Auth)
-│   │   └── hooks/             # 🔜 TODO
+│   │   ├── pages/                     # Page components
+│   │   │   ├── HomePage.jsx
+│   │   │   ├── CreateResultPage.jsx
+│   │   │   ├── CharactersPage.jsx
+│   │   │   ├── CharacterDetailPage.jsx
+│   │   │   ├── ProfilePage.jsx
+│   │   │   └── LoginPage.jsx
+│   │   ├── components/                # Reusable components
+│   │   │   ├── common/                # Shared components
+│   │   │   │   ├── PageLayout.jsx     # Layout wrapper
+│   │   │   │   ├── NavBar.jsx
+│   │   │   │   ├── BackButton.jsx
+│   │   │   │   └── AnimatedBackground.jsx
+│   │   │   ├── create/                # Character creation
+│   │   │   │   ├── CharacterForm.jsx
+│   │   │   │   ├── FormField.jsx       # Unified form field
+│   │   │   │   └── GenerateButton.jsx
+│   │   │   ├── character/             # Character display
+│   │   │   │   └── CharacterCard.jsx
+│   │   │   ├── result/                # Result display
+│   │   │   │   ├── RotatingCharacter.jsx
+│   │   │   │   ├── StoryDisplay.jsx
+│   │   │   │   ├── ImageGrid.jsx
+│   │   │   │   └── ActionButtons.jsx
+│   │   │   ├── home/                  # Homepage components
+│   │   │   └── login/                 # Login components
+│   │   ├── App.jsx                    # Main app component
+│   │   └── index.css                  # Global styles
 │   └── package.json
 │
-└── backend/                    # Backend 
-    ├── src/
-    │   ├── models/            # 🔜 Developing
-    │   ├── controllers/       # 🔜 Developing
-    │   ├── routes/            # 🔜 Developing
-    │   ├── services/          # 🔜 Developing (AI integration)
-    │   └── middleware/        # 🔜 Developing
-    └── package.json
+└── backend/                            # Flask Backend
+    ├── app.py                         # Application entry point
+    ├── config.py                      # Configuration management
+    ├── requirements.txt               # Python dependencies
+    ├── api/                           # API layer
+    │   ├── v1/
+    │   │   └── routes/                # API route handlers
+    │   │       ├── character_routes.py
+    │   │       ├── download_routes.py
+    │   │       ├── gallery_routes.py
+    │   │       └── health_routes.py
+    │   └── middleware/                # Middleware
+    │       ├── cors.py
+    │       └── error_handler.py
+    ├── core/                          # Business logic
+    │   └── services/
+    │       ├── generation_service.py  # Character generation
+    │       ├── character_service.py   # Character CRUD
+    │       └── gif_service.py         # GIF generation
+    ├── database/                      # Database layer
+    │   ├── models/                    # MongoDB models
+    │   │   ├── character_model.py
+    │   │   └── user_model.py
+    │   ├── repositories/              # Data access layer
+    │   └── connection.py              # DB connection
+    ├── integrations/                  # External API clients
+    │   └── clients/
+    │       ├── pixellab_client.py     # PixelLab API
+    │       └── meta_llama_client.py   # HuggingFace API
+    ├── storage/                       # File management
+    │   ├── file_manager.py
+    │   ├── zip_generator.py
+    │   └── directories/               # Generated files
+    └── utils/                         # Utilities
+        ├── gif_generator.py
+        ├── exceptions.py
+        ├── validators.py
+        └── logger.py
 ```
 
 ---
 
-## 🚀 Quick Start
+### Development Workflow
 
-### Frontend
+1. **Start MongoDB** (if using local instance):
+   ```bash
+   mongod
+   ```
 
-```bash
-cd frontend
-npm install
-npm run dev
-```
+2. **Start Backend:**
+   ```bash
+   cd backend
+   source venv/bin/activate
+   python app.py
+   ```
 
-**Runs on:** http://localhost:5173
+3. **Start Frontend** (in a new terminal):
+   ```bash
+   cd frontend
+   npm run dev
+   ```
 
-**Pages available:**
+4. **Access the application:**
+   - Frontend: http://localhost:5173
+   - Backend API: http://localhost:5000
+   - API Health Check: http://localhost:5000/api/v1/health
 
-- `/` - Home page
-- `/create` - Character creation (with mock data)
-- `/gallery` - Gallery (placeholder)
-- `/profile` - Profile (placeholder)
+### Available Pages
 
-### Backend (To be implemented)
-
-```bash
-cd backend
-npm install
-npm run dev
-```
-
-**Will run on:** http://localhost:5000
+- `/` - Home page with hero, features, and showcase
+- `/create` - Character creation form and result display
+- `/characters` - Gallery of all saved characters
+- `/characters/:id` - Character detail page with sprite preview and direction frames
+- `/profile` - User profile page
+- `/login` - Login page
 
 ---
 
@@ -133,118 +312,179 @@ npm run dev
 
 ---
 
-## 👥 Team Division
+## 🛠️ Development Guidelines
 
-### Frontend
+### Code Style
 
-**Completed:**
+- **Backend:** Follow PEP 8 Python style guide
+- **Frontend:** Use ESLint and Prettier for code formatting
+- **Comments:** All code comments should be in English
+- **Naming:** Use descriptive, camelCase for variables, PascalCase for components
 
-- Project setup and configuration
-- All page layouts
-- Home page components
-- Create/Result page components
-- Cyberpunk styling
+### Component Reusability
 
-**Next Steps:**
+- Use `PageLayout` component for consistent page structure
+- Use `FormField` component for all form inputs (text and textarea)
+- Extract common patterns into reusable components
+- Keep components focused and single-purpose
 
-- Gallery page components
-- Profile page components
-- API service layer
-- Authentication context
-- Connect to backend APIs
+### API Integration
 
-### Backend
+- All API calls should include proper error handling
+- Use retry mechanisms for external API calls (rate limits)
+- Implement loading states for async operations
+- Provide user feedback for all actions
 
-**To Do:**
+### File Organization
 
-- Setup Express server
-- MongoDB models (User, Character)
-- Authentication (JWT)
-- Character generation endpoints
-- AI integration (OpenAI + Replicate)
-- Image storage/processing
+- Group related components in feature folders
+- Keep utility functions in `utils/` directory
+- Store API clients in `integrations/clients/`
+- Maintain clear separation between layers (routes → services → repositories)
 
 ---
 
-## 📡 API Endpoints Needed
+## 📡 API Endpoints
 
-### Authentication(Google..)
-
-```
-POST /api/auth/register
-POST /api/auth/login
-GET  /api/auth/me
-```
-
-### Characters(example)
+### Character Management
 
 ```
-POST /api/characters/generate
+POST   /api/v1/characters/generate
   Body: {
     name: string,
     characterClass: string,
     personality: string,
     appearance: string,
     specialFeatures: string,
-    imageCount: number
+    selectedAnimations?: string[],
+    selectedDirections?: object
   }
   Response: {
     id: string,
     name: string,
-    images: [{url: string}],
-    story: string
+    images: [{url: string, direction: string, angle: string}],
+    story: string,
+    status: string
   }
 
-GET  /api/characters          # Get user's characters
-GET  /api/characters/:id      # Get specific character
-GET  /api/characters/:id/download  # Download ZIP
-DELETE /api/characters/:id    # Delete character
+GET    /api/v1/characters              # Get all characters (with filters)
+GET    /api/v1/characters/:id          # Get specific character
+PUT    /api/v1/characters/:id          # Update character
+DELETE /api/v1/characters/:id          # Delete character
+POST   /api/v1/characters/:id/save     # Save character to gallery
 ```
 
-### Users
+### Animation Management
 
 ```
-GET  /api/users/profile
-PUT  /api/users/profile
+POST   /api/v1/characters/:id/animations/:type/directions/:direction/generate
+  Response: {
+    frames: [{url: string, frame_index: int, gif_url?: string}],
+    gif_url: string
+  }
+
+DELETE /api/v1/characters/:id/animations/:type
+DELETE /api/v1/characters/:id/animations/:type/directions/:direction
+```
+
+### Download & Export
+
+```
+GET    /api/v1/characters/:id/download/images      # Download images ZIP
+GET    /api/v1/characters/:id/download/gif         # Download GIF
+GET    /api/v1/characters/:id/download/all         # Download all (images + GIF + story)
+GET    /api/v1/characters/:id/download/export      # Complete export package
+GET    /api/v1/characters/:id/images/direction/:direction  # Download single direction image
+```
+
+### Gallery
+
+```
+GET    /api/v1/gallery                    # Get gallery characters
+GET    /api/v1/gallery/user/:user_id      # Get user's gallery
+```
+
+### Health Check
+
+```
+GET    /api/v1/health                     # API health check
+GET    /api/v1/health/db                  # Database health check
 ```
 
 ---
 
-## 🗄️ Data Models(example)
+## 🗄️ Data Models
 
 ### User Model
 
-```javascript
+```python
 {
   username: String,
   email: String,
   password: String (hashed),
-  createdAt: Date
+  createdAt: DateTime,
+  updatedAt: DateTime
 }
 ```
 
-### Character Model(example)
+### Character Model
 
-```javascript
+```python
 {
-  userId: ObjectId (ref: User),
-  input: {
+  user_id: ObjectId (ref: User, optional),
+  name: String (required),
+  description: String,
+  status: String (pending/generating/completed/failed),
+  input_params: Dict {
     name: String,
     characterClass: String,
     personality: String,
     appearance: String,
     specialFeatures: String,
-    imageCount: Number
+    selectedAnimations: List,
+    selectedDirections: Dict
   },
-  generated: {
-    images: [{
-      url: String,
-      index: Number
-    }],
-    story: String
+  metadata: Dict {
+    character_dna: String,              # Fixed character DNA prompt
+    master_reference_path: String,       # Master reference image path
+    master_reference_direction: String   # Usually "south"
   },
-  status: String (generating/completed/failed),
-  createdAt: Date
+  images: List[Dict] {
+    url: String,
+    path: String,
+    direction: String,
+    angle: String,
+    index: Integer
+  },
+  story: Dict {
+    content: String,
+    generated_at: DateTime,
+    prompt: String
+  },
+  gif: Dict {
+    url: String,
+    path: String,
+    duration: Integer,
+    frame_count: Integer,
+    created_at: DateTime
+  },
+  animations: Dict {
+    "walk": {
+      "south": [{
+        url: String,
+        path: String,
+        frame_index: Integer,
+        gif_url: String (optional)
+      }],
+      ...
+    },
+    "run": {...},
+    "jump": {...},
+    "attack": {...}
+  },
+  created_at: DateTime,
+  updated_at: DateTime,
+  view_count: Integer
 }
 ```
 
@@ -254,53 +494,140 @@ PUT  /api/users/profile
 
 ### Frontend (.env)
 
-```
+```env
 VITE_API_URL=http://localhost:5000
 ```
 
-### Backend (.env) - Developing
+### Backend (.env)
 
-```
+```env
+# Flask Configuration
+FLASK_APP=app.py
+FLASK_ENV=development
 PORT=5000
-MONGODB_URI=mongodb://localhost:27017/ai-story-creator(Optional)
-JWT_SECRET=your_secret_key_here
-OPENAI_API_KEY=your_openai_key
-REPLICATE_API_KEY=your_replicate_key
+
+# MongoDB Configuration
+MONGODB_URI=mongodb://localhost:27017/ai-visual-synthesis
+
+# API Keys
+PIXELLAB_API_KEY=your_pixellab_api_key_here
+HUGGINGFACE_API_TOKEN=your_huggingface_token_here
+
+# Storage Configuration
+STORAGE_BASE_PATH=./storage/directories
+STATIC_URL_PREFIX=/static
+IMAGES_DIR=generated/images
+GIFS_DIR=generated/gifs
+
+# CORS Configuration
 FRONTEND_URL=http://localhost:5173
 ```
 
+### Required API Keys
+
+1. **PixelLab API Key:**
+   - Sign up at https://pixellab.ai
+   - Get your API key from the dashboard
+   - Used for pixel art generation and animation
+
+2. **HuggingFace API Token:**
+   - Sign up at https://huggingface.co
+   - Create an access token with read permissions
+   - Used for story generation via Meta Llama
+
 ---
 
-## 📝 Next Meeting Discussion
+## 🐛 Troubleshooting
 
-1. **API Contract** - Confirm request/response formats
-2. **MongoDB Setup** - Local or Atlas?
-3. **AI API Keys** - Who will create accounts?
-4. **Timeline** - Week by week plan
-5. **Testing Strategy** - How to test integration?
+### Common Issues
 
----
+**Backend won't start:**
+- Check MongoDB is running
+- Verify all environment variables are set in `.env`
+- Ensure virtual environment is activated
+- Check port 5000 is not in use
+
+**Frontend can't connect to backend:**
+- Verify backend is running on port 5000
+- Check `VITE_API_URL` in frontend `.env`
+- Check CORS configuration in backend
+
+**Character generation fails:**
+- Verify PixelLab API key is valid and has credits
+- Check API rate limits
+- Review backend logs for detailed error messages
+
+**Images not displaying:**
+- Check static file serving is configured correctly
+- Verify image paths in database
+- Check browser console for 404 errors
+
+**GIF generation issues:**
+- Ensure Pillow is installed correctly
+- Check file permissions for storage directory
+- Verify GIF frames are properly sorted
+
+## 📚 Technical Details
+
+### Character Consistency Strategy
+
+The system uses a "Character DNA" approach to maintain consistency:
+
+1. **Character DNA Extraction:** Fixed prompt extracted from initial generation
+2. **Master Reference Image:** South-facing standing pose used as reference
+3. **Locked Parameters:** 
+   - `image_guidance_scale=2.2`
+   - `init_image_strength=300.0`
+   - `image_size=64x64`
+4. **Consistent Prompts:** All animations use the same Character DNA with action-specific additions
+
+### Animation Generation Flow
+
+1. User selects animation type and directions
+2. System retrieves Master Reference Image from character metadata
+3. For each direction:
+   - Generate 4 frames using PixelLab `animate_with_text` API
+   - Use fixed Character DNA + action description
+   - Apply locked consistency parameters
+4. Automatically generate GIF from frames
+5. Store frames and GIF in character animations data
+
+### File Storage Structure
+
+```
+storage/directories/
+├── generated/
+│   ├── images/
+│   │   └── {character_id}/
+│   │       ├── {direction}_{index}.png
+│   │       └── {animation_type}/
+│   │           └── {direction}/
+│   │               ├── frame_{index}.png
+│   │               └── {animation_type}_{direction}.gif
+│   └── gifs/
+│       └── {character_id}.gif
+```
 
 ## 🔗 Useful Links
 
-- Frontend: http://localhost:5173
-- Backend: http://localhost:5000 (when ready)
-- GitHub: https://github.com/JuranHuang4399/AI-Story-Creator
+- **Frontend:** http://localhost:5173
+- **Backend API:** http://localhost:5000
+- **API Health Check:** http://localhost:5000/api/v1/health
+- **PixelLab API:** https://pixellab.ai
+- **HuggingFace:** https://huggingface.co
+
+## 📝 Notes
+
+- All code comments are in English
+- Character images are stored locally (can be migrated to cloud storage)
+- GIF generation uses Pillow with optimized settings to prevent ghosting
+- The system includes retry mechanisms for API rate limits
+- All API responses include proper error handling
 
 ---
 
-## 💡 Notes
-
-- Frontend is using **mock data** for now
-- Form submission works but calls fake API
-- Need to replace mock data with real API calls
-- Character images use placeholder images
-- Download/Save buttons show alerts (not functional yet)
-
----
-
-**Last Updated:** October 31, 2025  
-**Frontend Status:** Framework almost complete, ready for API integration  
-**Backend Status:** Developing
+**Last Updated:** December 2024  
+**Frontend Status:** ✅ Complete and optimized  
+**Backend Status:** ✅ Complete and production-ready
 
 ---

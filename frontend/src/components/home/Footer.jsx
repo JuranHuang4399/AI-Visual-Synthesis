@@ -35,7 +35,7 @@ function Footer() {
                   href="/gallery"
                   className="text-gray-400 hover:text-cyber-pink"
                 >
-                  Gallery
+                  Characters
                 </a>
               </li>
               <li>

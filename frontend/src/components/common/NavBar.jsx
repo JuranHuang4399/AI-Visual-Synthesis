@@ -67,14 +67,14 @@ function Navbar() {
             </Link>
 
             <Link
-              to="/gallery"
+              to="/characters"
               className={`px-4 py-2 rounded-lg font-semibold transition-all ${
-                isActive("/gallery")
+                isActive("/characters")
                   ? "text-cyber-pink border-b-2 border-cyber-pink"
                   : "text-white hover:text-cyber-cyan"
               }`}
             >
-              Gallery
+              Characters
             </Link>
 
             <Link

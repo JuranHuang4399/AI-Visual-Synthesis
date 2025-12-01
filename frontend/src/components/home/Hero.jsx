@@ -13,8 +13,7 @@ function Hero() {
 
       {/* Description */}
       <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-12">
-        Create unique pixel art characters and backstories powered by Stable
-        Diffusion and GPT-4. Transform your ideas into animated game sprites.
+        Create unique pixel art characters and backstories powered by AI. Transform your ideas into animated game sprites.
       </p>
 
       {/* CTA Buttons */}
@@ -23,8 +22,8 @@ function Hero() {
           <button className="btn-cyber-primary">Start Creating</button>
         </Link>
 
-        <Link to="/gallery">
-          <button className="btn-cyber-secondary">View Gallery</button>
+        <Link to="/characters">
+          <button className="btn-cyber-secondary">View Characters</button>
         </Link>
       </div>
     </section>

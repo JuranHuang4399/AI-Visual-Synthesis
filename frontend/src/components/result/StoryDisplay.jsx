@@ -4,7 +4,7 @@ function StoryDisplay({ story, characterName }) {
   }
   
   return (
-    <div className="mt-6 card-cyber">
+    <div>
       <h3 className="text-lg font-semibold text-cyber-purple mb-4">
         📖 {characterName}'s Story
       </h3>

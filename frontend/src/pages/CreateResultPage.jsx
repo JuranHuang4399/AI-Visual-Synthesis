@@ -4,14 +4,13 @@ import GeneratingLoader from "../components/result/GeneratingLoader";
 import ImageGrid from "../components/result/ImageGrid";
 import StoryDisplay from "../components/result/StoryDisplay";
 import ActionButtons from "../components/result/ActionButtons";
-import AnimatedBackground from "../components/common/AnimatedBackground";
-import BackButton from "../components/common/BackButton";
+import RotatingCharacter from "../components/result/RotatingCharacter";
+import PageLayout from "../components/common/PageLayout";
 
 function CreateResultPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedData, setGeneratedData] = useState(null);
-  // 创建页面使用1个GIF作为全屏背景
-  const [createGifCount] = useState(1);
+  const [lastFormData, setLastFormData] = useState(null); // Save last form data for regenerate
 
   // Mock data for testing
   const mockImages = [
@@ -24,31 +23,53 @@ function CreateResultPage() {
   const handleGenerate = async (formData) => {
     console.log("Generating character with data:", formData);
     setIsGenerating(true);
+    setLastFormData(formData); // Save form data
 
-    // Simulate API call
-    setTimeout(() => {
-      setGeneratedData({
-        name: formData.name,
-        images: mockImages,
-        story: `${formData.name} was born in the mystical realm of ${
-          formData.characterClass
-        }s. 
-        Known for being ${
-          formData.personality
-        }, this legendary hero has faced countless battles. 
-        Their appearance is striking: ${formData.appearance}. 
-        ${
-          formData.specialFeatures
-            ? `What makes them truly unique: ${formData.specialFeatures}.`
-            : ""
-        }
-        
-        Through determination and skill, ${
-          formData.name
-        } has become a legend among heroes.`,
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const response = await fetch(`${apiUrl}/api/v1/characters/generate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          characterClass: formData.characterClass,
+          personality: formData.personality,
+          appearance: formData.appearance,
+          specialFeatures: formData.specialFeatures,
+          // imageCount is always 8 (8 directions)
+        }),
       });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to generate character');
+      }
+
+      const data = await response.json();
+      
+      // Convert image URLs to full URLs (if API returns relative paths)
+      const images = data.images.map(img => ({
+        ...img,
+        url: img.url.startsWith('http') 
+          ? img.url 
+          : `${apiUrl}${img.url.startsWith('/') ? '' : '/'}${img.url}`
+      }));
+
+      setGeneratedData({
+        id: data.id,
+        name: data.name,
+        baseImage: data.baseImage || images[0], // Base image (for rotate character display)
+        images: images,
+        story: data.story || '',
+      });
+    } catch (error) {
+      console.error('Failed to generate character:', error);
+      alert(`Generation failed: ${error.message}`);
+    } finally {
       setIsGenerating(false);
-    }, 3000);
+    }
   };
 
   const handleDownloadAll = () => {
@@ -57,21 +78,64 @@ function CreateResultPage() {
   };
 
   const handleSaveToGallery = async () => {
-    console.log("Saving to gallery...");
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    alert("Save feature will be implemented with backend!");
+    if (!generatedData || !generatedData.id) {
+      alert("No character to save. Please generate a character first.");
+      return;
+    }
+
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const response = await fetch(`${apiUrl}/api/v1/characters/${generatedData.id}/save`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch (e) {
+          // If response is not JSON, use status text
+          throw new Error(`Save failed with status ${response.status}: ${response.statusText}`);
+        }
+        throw new Error(errorData.message || errorData.error || `Failed to save character (${response.status})`);
+      }
+
+      const data = await response.json();
+      alert(`Character "${generatedData.name}" saved to gallery successfully!`);
+      
+      // Optional: Navigate to gallery page
+      // window.location.href = '/gallery';
+      
+    } catch (error) {
+      console.error('Failed to save character:', error);
+      
+      // More detailed error information
+      let errorMessage = 'Save failed';
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        errorMessage = 'Unable to connect to server. Please ensure the backend server is running (http://localhost:5000)';
+      } else if (error.message) {
+        errorMessage = `Save failed: ${error.message}`;
+      } else {
+        errorMessage = `Save failed: ${error.toString()}`;
+      }
+      
+      alert(errorMessage);
+      console.error('Full error details:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      });
+    }
   };
 
   return (
-    <div className="min-h-screen relative">
-      <AnimatedBackground randomCount={createGifCount} />
-      <div className="relative z-10 container mx-auto px-4 py-8">
-        <div className="mb-6">
-          <BackButton />
-        </div>
-        <h1 className="text-4xl font-bold text-center mb-8 text-glow-cyan">
-          Create Your Character
-        </h1>
+    <PageLayout backgroundGifCount={1} showBackButton={true}>
+      <h1 className="text-4xl font-bold text-center mb-8 text-glow-cyan">
+        Create Your Character
+      </h1>
 
         {/* Two Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -100,15 +164,73 @@ function CreateResultPage() {
             {/* Generated Result */}
             {!isGenerating && generatedData && (
               <div className="space-y-6">
-                <ImageGrid images={generatedData.images} />
+                {/* 1. Rotate Character display (automatic rotation animation) */}
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold text-cyber-cyan">Rotate Character</h3>
+                  <div className="flex justify-center">
+                    <RotatingCharacter 
+                      images={generatedData.images || []}
+                      autoPlay={true}
+                      interval={500} // Switch image every 500ms (slower rotation speed)
+                    />
+                  </div>
+                </div>
+
+                {/* 2. 8 Frames Grid */}
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold text-cyber-cyan">8 Directions</h3>
+                  <div className="grid grid-cols-4 gap-2">
+                    {generatedData.images && generatedData.images.length > 0 ? (
+                      generatedData.images.map((image, index) => (
+                        <div 
+                          key={index}
+                          className="aspect-square bg-cyber-dark-200 rounded-lg overflow-hidden neon-border-cyan"
+                        >
+                          <img 
+                            src={image.url} 
+                            alt={`Direction ${index + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ))
+                    ) : (
+                      // Display 8 placeholder slots
+                      Array.from({ length: 8 }).map((_, index) => (
+                        <div 
+                          key={index}
+                          className="aspect-square bg-cyber-dark-200 rounded-lg border-2 border-dashed border-gray-600 flex items-center justify-center"
+                        >
+                          <span className="text-gray-500 text-xs">Empty</span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+
+                {/* 3. Story */}
                 <StoryDisplay
                   story={generatedData.story}
                   characterName={generatedData.name}
                 />
-                <ActionButtons
-                  onDownloadAll={handleDownloadAll}
-                  onSaveToGallery={handleSaveToGallery}
-                />
+
+                {/* 4. Action Buttons */}
+                <div className="flex gap-4">
+                  <button
+                    onClick={() => lastFormData && handleGenerate(lastFormData)}
+                    disabled={!lastFormData}
+                    className={`flex-1 btn-cyber-secondary ${
+                      !lastFormData ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
+                  >
+                    Regenerate
+                  </button>
+                  <button
+                    onClick={handleSaveToGallery}
+                    className="flex-1 btn-cyber-primary"
+                  >
+                    Save Character
+                  </button>
+                </div>
               </div>
             )}
 
@@ -120,8 +242,7 @@ function CreateResultPage() {
             )}
           </div>
         </div>
-      </div>
-    </div>
+    </PageLayout>
   );
 }
 

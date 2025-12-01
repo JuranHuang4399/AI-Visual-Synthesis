@@ -7,13 +7,27 @@ import AnimatedBackground from "../components/common/AnimatedBackground";
 import HomeNavBar from "../components/common/HomeNavBar";
 
 function HomePage() {
-  // 首页使用1个GIF作为全屏背景
+  // Homepage uses 1 GIF as full-screen background
   const [homeGifCount] = useState(1);
 
   return (
-    <div className="min-h-screen relative">
+    <div 
+      className="min-h-screen relative"
+      style={{
+        // Optimize scroll performance
+        transform: 'translateZ(0)',
+        willChange: 'scroll-position',
+      }}
+    >
       <AnimatedBackground randomCount={homeGifCount} />
-      <div className="relative z-10">
+      <div 
+        className="relative z-10"
+        style={{
+          // GPU acceleration optimization
+          transform: 'translateZ(0)',
+          willChange: 'transform',
+        }}
+      >
         <HomeNavBar />
         <Hero />
         <Features />

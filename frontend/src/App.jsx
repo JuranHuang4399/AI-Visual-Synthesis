@@ -2,10 +2,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/common/NavBar";
 import HomePage from "./pages/HomePage";
 import CreateResultPage from "./pages/CreateResultPage";
-import GalleryPage from "./pages/GalleryPage";
+import CharactersPage from "./pages/CharactersPage";
+import CharacterDetailPage from "./pages/CharacterDetailPage";
 import ProfilePage from "./pages/ProfilePage";
 import LoginPage from "./pages/LoginPage";
-import GifTestPage from "./pages/GifTestPage";
 
 function App() {
   return (
@@ -13,7 +13,6 @@ function App() {
       <Routes>
         {/* Pages without navbar */}
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/gif-test" element={<GifTestPage />} />
         <Route path="/" element={<HomePage />} />
         
         {/* Pages with navbar */}
@@ -24,7 +23,8 @@ function App() {
               <Navbar />
               <Routes>
                 <Route path="/create" element={<CreateResultPage />} />
-                <Route path="/gallery" element={<GalleryPage />} />
+                <Route path="/characters" element={<CharactersPage />} />
+                <Route path="/characters/:id" element={<CharacterDetailPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
               </Routes>
             </>

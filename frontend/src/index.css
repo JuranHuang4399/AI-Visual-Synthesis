@@ -28,12 +28,15 @@
 }
 
 @layer components {
-  /* Button styles - Cyberpunk */
+  /* Button styles - Cyberpunk (performance optimized) */
   .btn-cyber-primary {
     @apply px-6 py-3 bg-cyber-pink text-white font-bold rounded-lg
            hover:bg-cyber-pink-light hover:shadow-neon-pink
            transition-all duration-100 transform hover:scale-105
            border-2 border-cyber-pink uppercase tracking-wider;
+    /* GPU acceleration optimization */
+    will-change: transform;
+    transform: translateZ(0);
   }
 
   .btn-cyber-secondary {
@@ -41,6 +44,9 @@
            border-2 border-cyber-cyan hover:bg-cyber-cyan hover:text-cyber-dark-300
            hover:shadow-neon-cyan transition-all duration-300 transform hover:scale-105
            uppercase tracking-wider;
+    /* GPU acceleration optimization */
+    will-change: transform;
+    transform: translateZ(0);
   }
 
   .btn-cyber-purple {
@@ -65,31 +71,31 @@
            transition-all duration-300 resize-none placeholder-gray-500;
   }
 
-  /* Card styles - Cyberpunk */
+  /* Card styles - Cyberpunk (performance optimized) */
   .card-cyber {
     @apply bg-cyber-dark-200 rounded-lg p-6
            border-2 border-cyber-cyan/30
            hover:border-cyber-pink hover:shadow-neon-pink
            transition-all duration-300 transform hover:scale-[1.02];
+    /* GPU acceleration optimization */
+    will-change: transform;
+    transform: translateZ(0);
   }
 
-  /* Neon titles - Maximum clarity version */
+  /* Neon titles - Maximum clarity version (performance optimized) */
   .title-neon {
     /* Solid white text for clarity */
     @apply text-4xl md:text-6xl font-black text-white
            relative tracking-wide;
-    /* Very strong multi-color glow */
+    /* Simplified text-shadow, reduced layers for better performance */
     text-shadow: 
-      /* Inner glow - brightest */ 0 0 5px
-        rgba(255, 255, 255, 1),
-      0 0 10px rgba(255, 255, 255, 0.9),
+      /* Inner glow - brightest */ 0 0 5px rgba(255, 255, 255, 1),
       /* Pink layer */ 0 0 20px rgba(255, 0, 110, 1),
-      0 0 30px rgba(255, 0, 110, 0.8),
-      /* Purple layer */ 0 0 40px rgba(189, 0, 255, 0.8),
-      0 0 50px rgba(189, 0, 255, 0.6),
-      /* Cyan layer */ 0 0 60px rgba(0, 217, 255, 0.7),
-      0 0 70px rgba(0, 217, 255, 0.5);
-    /* Subtle pulse animation */
+      /* Cyan layer */ 0 0 40px rgba(0, 217, 255, 0.7);
+    /* GPU acceleration optimization */
+    transform: translateZ(0);
+    will-change: transform;
+    /* Simplified pulse animation */
     animation: title-pulse 3s ease-in-out infinite;
   }
 
@@ -99,7 +105,7 @@
       0 0 30px rgba(0, 217, 255, 0.5);
   }
 
-  /* Grid background effect */
+  /* Grid background effect (performance optimized) */
   .cyber-grid-bg {
     background-image: linear-gradient(
         rgba(189, 0, 255, 0.1) 1px,
@@ -107,6 +113,11 @@
       ),
       linear-gradient(90deg, rgba(189, 0, 255, 0.1) 1px, transparent 1px);
     background-size: 50px 50px;
+    /* GPU acceleration optimization */
+    transform: translateZ(0);
+    will-change: transform;
+    /* Limit repaint scope */
+    contain: layout style paint;
   }
 
   /* Neon borders */
@@ -151,24 +162,24 @@
   }
 }
 
-/* Clearer pulse animation - less dramatic */
+/* Optimized pulse animation - reduce text-shadow layers to improve performance */
 @keyframes title-pulse {
   0%,
   100% {
-    text-shadow: 0 0 5px rgba(255, 255, 255, 1),
-      0 0 10px rgba(255, 255, 255, 0.9), 0 0 20px rgba(255, 0, 110, 1),
-      0 0 30px rgba(255, 0, 110, 0.8), 0 0 40px rgba(189, 0, 255, 0.8),
-      0 0 50px rgba(189, 0, 255, 0.6), 0 0 60px rgba(0, 217, 255, 0.7);
+    text-shadow: 
+      0 0 5px rgba(255, 255, 255, 1),
+      0 0 20px rgba(255, 0, 110, 1),
+      0 0 40px rgba(0, 217, 255, 0.7);
   }
   50% {
-    text-shadow: 0 0 10px rgba(255, 255, 255, 1),
-      0 0 15px rgba(255, 255, 255, 0.9), 0 0 30px rgba(255, 0, 110, 1),
-      0 0 45px rgba(255, 0, 110, 0.9), 0 0 60px rgba(189, 0, 255, 0.9),
-      0 0 75px rgba(189, 0, 255, 0.7), 0 0 90px rgba(0, 217, 255, 0.8);
+    text-shadow: 
+      0 0 10px rgba(255, 255, 255, 1),
+      0 0 30px rgba(255, 0, 110, 1),
+      0 0 60px rgba(0, 217, 255, 0.8);
   }
 }
 
-/* 像素GIF浮动动画 */
+/* Pixel GIF floating animation */
 @keyframes pixel-float {
   0%, 100% {
     transform: translateY(0) translateX(0) rotate(0deg);
@@ -188,7 +199,7 @@
   animation: pixel-float 4s ease-in-out infinite;
 }
 
-/* 像素恐龙走路动画 - 全屏移动 */
+/* Pixel dinosaur walk animation - full screen movement */
 @keyframes dinosaurWalk {
   0% {
     transform: translateX(calc(-50vw - 60px)) scaleX(1);
@@ -207,7 +218,7 @@
   }
 }
 
-/* 恐龙走路时的轻微上下浮动（模拟走路） */
+/* Slight vertical bounce when dinosaur walks (simulating walking) */
 @keyframes dinosaurBounce {
   0%, 100% {
     transform: translateY(0);
