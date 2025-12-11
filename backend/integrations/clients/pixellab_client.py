@@ -59,6 +59,9 @@ class PixelLabClient:
         }
         
         try:
+            logger.info(f"Sending request to PixelLab API: {self.base_url}")
+            logger.debug(f"Request data: image_size={data.get('image_size')}, detail={data.get('detail')}, direction={data.get('direction')}")
+            
             response = requests.post(
                 self.base_url,
                 headers={
@@ -66,25 +69,45 @@ class PixelLabClient:
                     "Content-Type": "application/json"
                 },
                 json=data,
-                timeout=120  # Increase timeout to 120 seconds (2 minutes), generation may take longer
+                timeout=180  # Increase timeout to 180 seconds (3 minutes), generation may take longer
             )
             
+            logger.info(f"Received response from PixelLab API: status={response.status_code}")
+            
             if response.status_code == 200:
-                resp_json = response.json()
-                base64_img = resp_json["image"]["base64"]
-                img_bytes = base64.b64decode(base64_img)
-                logger.info(f"Successfully generated pixel art: {description[:50]}...")
-                return img_bytes
+                try:
+                    resp_json = response.json()
+                    if "image" in resp_json and "base64" in resp_json["image"]:
+                        base64_img = resp_json["image"]["base64"]
+                        img_bytes = base64.b64decode(base64_img)
+                        logger.info(f"Successfully generated pixel art: {description[:50]}... (size: {len(img_bytes)} bytes)")
+                        return img_bytes
+                    else:
+                        logger.error(f"Unexpected response format: {resp_json}")
+                        raise APIError(f"PixelLab API returned unexpected format: missing 'image.base64' field")
+                except ValueError as e:
+                    # JSON parsing error
+                    logger.error(f"Failed to parse JSON response: {str(e)}")
+                    logger.error(f"Response content (first 500 chars): {response.text[:500] if response.text else 'Empty response'}")
+                    logger.error(f"Response status code: {response.status_code}")
+                    raise APIError(f"PixelLab API returned invalid JSON: {str(e)}. Response: {response.text[:200] if response.text else 'Empty'}")
             else:
-                error_msg = response.json() if response.content else response.text
-                logger.error(f"PixelLab API error: {error_msg}")
-                raise APIError(f"PixelLab API error: {error_msg}")
+                # Non-200 status code
+                try:
+                    error_msg = response.json() if response.content else response.text
+                except ValueError:
+                    error_msg = response.text[:500] if response.text else f"HTTP {response.status_code}"
+                logger.error(f"PixelLab API error (status {response.status_code}): {error_msg}")
+                logger.error(f"Request data: image_size={data.get('image_size')}, detail={data.get('detail')}")
+                raise APIError(f"PixelLab API error (status {response.status_code}): {error_msg}")
         
         except requests.exceptions.Timeout as e:
             logger.error(f"PixelLab API request timeout: {str(e)}")
-            raise APIError(f"PixelLab API request timeout: The request took longer than 120 seconds. Please try again.")
+            logger.error(f"Request took longer than 180 seconds. This may indicate API is slow or overloaded.")
+            raise APIError(f"PixelLab API request timeout: The request took longer than 180 seconds. The API may be slow or overloaded. Please try again later.")
         except requests.exceptions.RequestException as e:
             logger.error(f"PixelLab API request failed: {str(e)}")
+            logger.error(f"Request exception type: {type(e).__name__}")
             raise APIError(f"PixelLab API request failed: {str(e)}")
     
     def rotate_image(

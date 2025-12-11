@@ -187,18 +187,20 @@ def save_character(character_id):
             from utils.exceptions import NotFoundError
             raise NotFoundError(f"Character not found: {character_id}")
         
-        # Ensure character status is completed
-        if character.status != 'completed':
+        # Only allow saving if generation is completed or pending_save
+        if character.status not in ['completed', 'pending_save']:
             return jsonify({
                 'error': 'Character generation is not completed yet',
                 'status': character.status
             }), 400
         
-        # Character is already saved to database, this is just confirming save
-        # Can add a flag field to indicate user has confirmed save (if needed)
-        # Currently character is already in database, return success directly
+        # If status is pending_save, change to completed
+        if character.status == 'pending_save':
+            character.status = 'completed'
+            character.save()
+            logger.info(f"Character {character_id} status changed from pending_save to completed")
         
-        logger.info(f"Character {character_id} saved to gallery by user")
+        logger.info(f"Character {character_id} saved to gallery by user (status is completed)")
         
         try:
             # Try to convert to dict, return simplified version if fails

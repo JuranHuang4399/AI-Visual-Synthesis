@@ -1,5 +1,8 @@
 function StoryDisplay({ story, characterName }) {
-  if (!story) {
+  // Handle both string and object formats
+  const storyContent = story?.content || story || '';
+  
+  if (!storyContent) {
     return null;
   }
   
@@ -9,7 +12,7 @@ function StoryDisplay({ story, characterName }) {
         📖 {characterName}'s Story
       </h3>
       <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">
-        {story}
+        {storyContent}
       </p>
     </div>
   );

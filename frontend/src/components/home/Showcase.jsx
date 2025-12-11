@@ -28,12 +28,12 @@ function Showcase() {
         const formattedCharacters = characters.slice(0, 3).map(char => ({
           id: char.id,
           name: char.name,
-          image: char.images && char.images.length > 0 
+          image: char.images && char.images.length > 0 && char.images[0].url
             ? (char.images[0].url.startsWith('http') 
                 ? char.images[0].url 
                 : `${apiUrl}${char.images[0].url.startsWith('/') ? '' : '/'}${char.images[0].url}`)
             : null,
-          description: char.story || char.description || char.name,
+          description: char.story?.content || char.story || char.description || char.name,
         }));
         
         setExamples(formattedCharacters);

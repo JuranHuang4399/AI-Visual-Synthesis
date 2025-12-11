@@ -47,26 +47,13 @@ def create_app():
     logger.info(f"Static file service initialized. Storage path: {storage_path}")
     logger.info(f"Static URL prefix: {config.STATIC_URL_PREFIX}")
     
-    # Use before_request to debug all requests
-    @app.before_request
-    def log_request_info():
-        from flask import request
-        if request.path.startswith('/static/'):
-            logger.info(f"=== Request to static path: {request.path} ===")
-    
     @app.route('/static/<path:filepath>')
     def serve_static(filepath):
         """Serve static files"""
-        logger.info(f"=== Static file route CALLED: {filepath} ===")
         try:
             # Build full file path
             full_path = storage_path / filepath
             full_path = full_path.resolve()
-            
-            logger.info(f"Serving static file: {filepath}")
-            logger.info(f"Storage base: {storage_path}")
-            logger.info(f"Full path: {full_path}")
-            logger.info(f"Full path exists: {full_path.exists()}")
             
             # Security check: ensure path is within storage directory (prevent path traversal attacks)
             try:
@@ -86,22 +73,10 @@ def create_app():
                 abort(404)
             
             # Return file
-            logger.info(f"Successfully serving file: {filepath}")
             return send_file(str(full_path))
         except Exception as e:
             logger.error(f"Failed to serve static file {filepath}: {str(e)}", exc_info=True)
             abort(404)
-    
-    # Print all registered routes after application startup (for debugging)
-    @app.after_request
-    def log_registered_routes(response):
-        if hasattr(app, '_routes_logged'):
-            return response
-        app._routes_logged = True
-        logger.info("=== Registered routes ===")
-        for rule in app.url_map.iter_rules():
-            logger.info(f"Route: {rule.rule} -> {rule.endpoint}")
-        return response
     
     # Register error handlers (after static file route)
     register_error_handlers(app)

@@ -29,3 +29,6 @@ logs/
 # Explicitly include storage directory (do not ignore)
 !storage/
 !storage/**
+# But ignore temporary files
+storage/directories/temp/
+storage/directories/temp/**

@@ -9,9 +9,7 @@ function CharacterForm({ onSubmit, isLoading }) {
     personality: "",
     appearance: "",
     specialFeatures: "",
-    // Animation selection
-    selectedAnimations: [], // Selected action type array, e.g., ["attack", "walk"]
-    selectedDirections: {}, // Directions for each action type, e.g., { "attack": ["east", "south"], "walk": ["east"] }
+    imageCount: 4, // Default to 4 images (1, 4, or 8)
   });
 
   const handleChange = (e) => {
@@ -90,83 +88,24 @@ function CharacterForm({ onSubmit, isLoading }) {
         rows={3}
       />
 
-      {/* Animation Selection */}
+      {/* Image Count Selection */}
       <div className="mb-4">
         <label className="block text-cyber-cyan font-semibold mb-2">
-          Select Animations (Beta)
+          Number of Directions <span className="text-cyber-pink">*</span>
         </label>
-        <p className="text-sm text-gray-400 mb-3">
-          Choose animation types and directions to generate during character creation
+        <select
+          name="imageCount"
+          value={formData.imageCount}
+          onChange={handleChange}
+          className="input-cyber"
+        >
+          <option value={1}>1 Direction (Front View Only)</option>
+          <option value={4}>4 Directions (North, East, South, West)</option>
+          <option value={8}>8 Directions (All Directions)</option>
+        </select>
+        <p className="text-xs text-gray-400 mt-1">
+          Select how many directional views to generate for your character
         </p>
-        
-        {/* Animation Types */}
-        <div className="mb-4">
-          <label className="block text-sm text-cyber-cyan mb-2">Animation Types:</label>
-          <div className="flex flex-wrap gap-2">
-            {['attack', 'walk', 'run', 'jump'].map((animType) => (
-              <label key={animType} className="flex items-center space-x-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={formData.selectedAnimations.includes(animType)}
-                  onChange={(e) => {
-                    const newAnimations = e.target.checked
-                      ? [...formData.selectedAnimations, animType]
-                      : formData.selectedAnimations.filter(a => a !== animType);
-                    const newDirections = { ...formData.selectedDirections };
-                    if (!e.target.checked) {
-                      delete newDirections[animType];
-                    }
-                    setFormData({
-                      ...formData,
-                      selectedAnimations: newAnimations,
-                      selectedDirections: newDirections
-                    });
-                  }}
-                  className="w-4 h-4 text-cyber-cyan bg-cyber-dark-200 border-cyber-cyan rounded focus:ring-cyber-cyan"
-                />
-                <span className="text-cyber-cyan capitalize">{animType}</span>
-              </label>
-            ))}
-          </div>
-        </div>
-
-        {/* Directions for each selected animation */}
-        {formData.selectedAnimations.length > 0 && (
-          <div className="space-y-3">
-            {formData.selectedAnimations.map((animType) => (
-              <div key={animType} className="bg-cyber-dark-200 p-3 rounded">
-                <label className="block text-sm text-cyber-cyan mb-2 capitalize">
-                  {animType} Directions:
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {['north', 'north-east', 'east', 'south-east', 'south', 'south-west', 'west', 'north-west'].map((dir) => (
-                    <label key={dir} className="flex items-center space-x-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={(formData.selectedDirections[animType] || []).includes(dir)}
-                        onChange={(e) => {
-                          const currentDirs = formData.selectedDirections[animType] || [];
-                          const newDirs = e.target.checked
-                            ? [...currentDirs, dir]
-                            : currentDirs.filter(d => d !== dir);
-                          setFormData({
-                            ...formData,
-                            selectedDirections: {
-                              ...formData.selectedDirections,
-                              [animType]: newDirs
-                            }
-                          });
-                        }}
-                        className="w-4 h-4 text-cyber-cyan bg-cyber-dark-200 border-cyber-cyan rounded focus:ring-cyber-cyan"
-                      />
-                      <span className="text-xs text-gray-400">{dir}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
 
       {/* Submit Button */}

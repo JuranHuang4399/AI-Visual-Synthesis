@@ -12,9 +12,6 @@ const ALL_GIFS = [
   '/gifs/pixel GIF by haydiroket (Mert Keskin).gif',
 ];
 
-// Debug: Print all GIF paths
-console.log('🎬 All available GIF files:', ALL_GIFS);
-
 // Function to randomly shuffle array
 function shuffleArray(array) {
   const shuffled = [...array];
@@ -51,7 +48,6 @@ function AnimatedBackground({ gifFiles = [], randomCount = null }) {
       gif = gifs[0] || null;
     }
 
-    console.log('🎬 AnimatedBackground: Selected background GIF:', gif);
     setSelectedGif(gif);
   }, [gifFiles, randomCount]);
 
@@ -108,11 +104,7 @@ function AnimatedBackground({ gifFiles = [], randomCount = null }) {
               imageRendering: 'auto',
               backfaceVisibility: 'hidden',
             }}
-            onLoad={(e) => {
-              console.log(`✅ Background GIF loaded successfully: ${selectedGif}`);
-            }}
             onError={(e) => {
-              console.error(`❌ Background GIF failed to load: ${selectedGif}`, e);
               e.target.style.display = 'none';
             }}
           />

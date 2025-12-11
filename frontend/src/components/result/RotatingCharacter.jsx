@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 
 /**
  * Rotating Character Display Component
- * Automatically loops through 8 direction images to create rotation animation effect
+ * Automatically loops through 4 direction images to create rotation animation effect
  */
 function RotatingCharacter({ images = [], autoPlay = true, interval = 500 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -20,8 +20,7 @@ function RotatingCharacter({ images = [], autoPlay = true, interval = 500 }) {
 
   // Sort images by direction order (ensure clockwise rotation)
   const sortedImages = useMemo(() => {
-    const directionOrder = ["north", "north-east", "east", "south-east", 
-                           "south", "south-west", "west", "north-west"];
+    const directionOrder = ["north", "east", "south", "west"];
     return [...images].sort((a, b) => {
       const aIndex = directionOrder.indexOf(a.direction || a.angle || '');
       const bIndex = directionOrder.indexOf(b.direction || b.angle || '');

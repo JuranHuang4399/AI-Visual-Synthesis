@@ -57,19 +57,11 @@ class GenerationService:
             # 2. Generate images (multiple angles)
             images = self._generate_images(character, form_data)
             
-            # 3. Generate selected animations (if user selected)
-            selected_animations = form_data.get('selectedAnimations', [])
-            selected_directions = form_data.get('selectedDirections', {})
-            
-            if selected_animations and selected_directions:
-                logger.info(f"Generating selected animations: {selected_animations}")
-                self._generate_selected_animations(character, form_data, selected_animations, selected_directions)
-            
-            # 4. Generate story
+            # 3. Generate story (animations removed - no longer generated automatically)
             story = self._generate_story(character, form_data)
             
-            # 5. Update status
-            character.status = 'completed'
+            # 5. Update status to 'pending_save' (not 'completed' - user must click save to gallery)
+            character.status = 'pending_save'
             character.generation_time = time.time() - start_time
             character.save()
             
@@ -87,9 +79,27 @@ class GenerationService:
     
     def _generate_images(self, character: Character, form_data: Dict) -> List[Dict]:
         """Generate multi-directional images using Rotate API"""
-        # Fixed 8 directions
-        directions = ["north", "north-east", "east", "south-east", 
-                     "south", "south-west", "west", "north-west"]
+        # Get image count from form data (1, 4, or 8)
+        image_count = int(form_data.get('imageCount', 4))
+        
+        # Define directions based on image count
+        if image_count == 1:
+            # Only generate south (front view)
+            directions = ["south"]
+        elif image_count == 4:
+            # Generate 4 basic directions
+            directions = ["north", "east", "south", "west"]
+        elif image_count == 8:
+            # Generate all 8 directions
+            directions = ["north", "north-east", "east", "south-east", 
+                         "south", "south-west", "west", "north-west"]
+        else:
+            # Default to 4 if invalid value
+            logger.warning(f"Invalid imageCount: {image_count}, defaulting to 4")
+            directions = ["north", "east", "south", "west"]
+            image_count = 4
+        
+        logger.info(f"Generating {image_count} direction images: {directions}")
         
         # Generation parameters
         image_width = int(form_data.get('imageWidth', 64))
@@ -105,7 +115,7 @@ class GenerationService:
         logger.info(f"Character DNA extracted: {character_dna[:100]}...")
         
         # Step 1: Generate base image (south direction) with retry mechanism
-        max_retries = 2
+        max_retries = 3  # Increase retries to 3
         retry_count = 0
         base_image_bytes = None
         
@@ -119,7 +129,9 @@ class GenerationService:
                     logger.info(f"Retrying base image generation (attempt {retry_count + 1}/{max_retries + 1})...")
                 else:
                     logger.info(f"Generating base character image (south direction)...")
+                    logger.info(f"Prompt: {pixel_prompt[:100]}...")
                 
+                start_time = time.time()
                 base_image_bytes = self.pixellab_client.generate_pixel_art(
                     description=pixel_prompt,
                     image_width=image_width,
@@ -128,21 +140,26 @@ class GenerationService:
                     direction="south",
                     no_background=no_background
                 )
+                elapsed_time = time.time() - start_time
+                logger.info(f"Base image generation completed in {elapsed_time:.2f} seconds")
                 break
             except Exception as e:
                 error_str = str(e)
-                # Retry on timeout errors
-                if "timeout" in error_str.lower() or "Read timed out" in error_str:
+                logger.warning(f"Base image generation attempt {retry_count + 1} failed: {error_str}")
+                # Retry on timeout errors or connection errors
+                if "timeout" in error_str.lower() or "Read timed out" in error_str or "Connection" in error_str:
                     retry_count += 1
                     if retry_count <= max_retries:
-                        wait_time = 5 * retry_count
-                        logger.warning(f"Base image generation timeout, waiting {wait_time}s before retry {retry_count}/{max_retries}")
+                        wait_time = 10 * retry_count  # Increase wait time: 10s, 20s, 30s
+                        logger.warning(f"Base image generation timeout/connection error, waiting {wait_time}s before retry {retry_count}/{max_retries}")
                         time.sleep(wait_time)
                         continue
                     else:
-                        logger.error(f"Base image generation failed after {max_retries + 1} attempts due to timeout")
-                        raise GenerationError(f"Base image generation timeout after {max_retries + 1} attempts. The API may be slow, please try again later.")
+                        logger.error(f"Base image generation failed after {max_retries + 1} attempts due to timeout/connection issues")
+                        raise GenerationError(f"Base image generation failed after {max_retries + 1} attempts. The PixelLab API may be slow or experiencing issues. Please try again later.")
                 else:
+                    # For other errors, don't retry, just raise
+                    logger.error(f"Base image generation failed with non-retryable error: {error_str}")
                     raise
         
         # Save base image
@@ -178,7 +195,12 @@ class GenerationService:
         
         logger.info(f"Base image generated successfully")
         
-        # Step 2: Generate other directions using Rotate API
+        # Step 2: Generate other directions using Rotate API (if needed)
+        # If only 1 image requested, skip rotation
+        if image_count == 1:
+            logger.info("Only 1 image requested, skipping rotation generation")
+            return images
+        
         image_size = {"width": image_width, "height": image_length}
         
         # Filter out south direction (already generated), generate other directions
@@ -249,11 +271,18 @@ class GenerationService:
         
         # Sort by clockwise rotation order (starting from north, clockwise)
         # This order ensures smooth rotation animation without jumps
-        clockwise_order = ["north", "north-east", "east", "south-east", 
-                          "south", "south-west", "west", "north-west"]
+        if image_count == 1:
+            # Only one image, no sorting needed
+            clockwise_order = ["south"]
+        elif image_count == 4:
+            clockwise_order = ["north", "east", "south", "west"]
+        else:  # 8 directions
+            clockwise_order = ["north", "north-east", "east", "south-east", 
+                              "south", "south-west", "west", "north-west"]
+        
         images.sort(key=lambda x: clockwise_order.index(x['direction']) if x['direction'] in clockwise_order else 999)
         
-        # Verify all 8 directions are generated
+        # Verify all requested directions are generated
         generated_directions = {img['direction'] for img in images}
         expected_directions = set(directions)
         missing_directions = expected_directions - generated_directions
@@ -263,66 +292,7 @@ class GenerationService:
         else:
             logger.info(f"Successfully generated all {len(images)} directions")
         
-        # Step 3: Generate test animations for east direction to ensure character consistency
-        # Generate animations immediately after static images, using Master Reference Image (south direction)
-        test_direction = "east"
-        test_animations = ["walk", "run", "attack"]
-        
-        # Use Master Reference Image (south direction image)
-        master_reference_path = self._get_master_reference_path(character, images)
-        
-        if master_reference_path:
-            logger.info(f"Generating test animations for {test_direction} direction using Master Reference: {', '.join(test_animations)}")
-            
-            # Initialize animations field
-            if not hasattr(character, 'animations') or not character.animations:
-                character.animations = {}
-            
-            for animation_type in test_animations:
-                try:
-                    # Initialize animation type
-                    if animation_type not in character.animations:
-                        character.animations[animation_type] = {
-                            'south': [],
-                            'north': [],
-                            'north-east': [],
-                            'east': [],
-                            'south-east': [],
-                            'south-west': [],
-                            'west': [],
-                            'north-west': []
-                        }
-                    
-                    # Generate animation frames for this direction (using Master Reference Image, locked consistency)
-                    logger.info(f"Generating {animation_type} animation for {test_direction} using Master Reference Image...")
-                    frames = self._generate_animation_frames(
-                        character_id=str(character.id),
-                        animation_type=animation_type,
-                        direction=test_direction,
-                        reference_image_path=master_reference_path,
-                        n_frames=4,
-                        use_prompt_only=False
-                    )
-                    
-                    # Save animation frames (frames already contain gif_url)
-                    character.animations[animation_type][test_direction] = frames
-                    character.save()
-                    
-                    # Check if GIF URL exists
-                    gif_url = frames[0].get('gif_url') if frames else None
-                    if gif_url:
-                        logger.info(f"Successfully generated {len(frames)} frames with GIF for {animation_type} - {test_direction}")
-                    else:
-                        logger.info(f"Successfully generated {len(frames)} frames (no GIF) for {animation_type} - {test_direction}")
-                    
-                except Exception as e:
-                    logger.error(f"Failed to generate {animation_type} animation for {test_direction}: {str(e)}")
-                    # Continue generating other animations, don't interrupt flow
-                    continue
-            
-            logger.info(f"Test animations generation completed for {test_direction} direction")
-        else:
-            logger.warning(f"Could not find {test_direction} image for test animation generation")
+        # Animation generation removed - only generate directional rotate images
         
         return images
     
@@ -366,9 +336,6 @@ class GenerationService:
         
         If use_prompt_only=True, use pure prompts to generate independent descriptions for each frame (similar to generating directional images)
         If use_prompt_only=False, use reference image and animate_with_text API
-        """
-        """
-        Generate frames for specific direction and animation
         
         Args:
             character_id: Character ID
@@ -808,6 +775,137 @@ class GenerationService:
         
         # If requested frames are fewer than template, truncate
         return base_descriptions[:n_frames]
+    
+    def _generate_gif_from_frames(
+        self,
+        frames: List[Dict],
+        character_id: str,
+        animation_type: str,
+        direction: str
+    ) -> Optional[str]:
+        """
+        Generate GIF from animation frames
+        
+        Args:
+            frames: List of frame dictionaries with 'path' key
+            character_id: Character ID
+            animation_type: Animation type (walk, run, etc.)
+            direction: Direction
+        
+        Returns:
+            GIF URL or None if generation failed
+        """
+        try:
+            # Get frame paths
+            frame_paths = [frame.get('path') for frame in frames if frame.get('path')]
+            
+            if len(frame_paths) < 2:
+                logger.warning(f"Not enough frames to generate GIF: {len(frame_paths)}")
+                return None
+            
+            # Create temporary GIF path
+            from pathlib import Path
+            temp_gif_path = Path(self.file_manager.temp_dir) / f"{character_id}_{animation_type}_{direction}_temp.gif"
+            
+            # Generate GIF
+            logger.info(f"Generating GIF for {animation_type} - {direction} with {len(frame_paths)} frames")
+            gif_path = create_gif_from_frames(
+                frame_paths,
+                output_path=str(temp_gif_path),
+                duration=200,  # 200ms per frame
+                loop=0,  # Infinite loop
+                optimize=False  # Don't optimize to prevent ghosting
+            )
+            
+            # Read GIF data
+            with open(gif_path, 'rb') as f:
+                gif_data = f.read()
+            
+            # Save to final location (use save_gif with a specific path structure)
+            # Create animation GIF directory structure
+            from pathlib import Path
+            animation_gif_dir = self.file_manager.images_dir / character_id / animation_type / direction
+            animation_gif_dir.mkdir(parents=True, exist_ok=True)
+            
+            gif_filename = f"{animation_type}_{direction}.gif"
+            gif_path = animation_gif_dir / gif_filename
+            
+            # Write GIF file
+            with open(gif_path, 'wb') as f:
+                f.write(gif_data)
+            
+            # Generate URL
+            url = f"{config.STATIC_URL_PREFIX}/generated/images/{character_id}/{animation_type}/{direction}/{gif_filename}"
+            
+            file_path = str(gif_path)
+            
+            # Delete temporary file
+            if temp_gif_path.exists():
+                temp_gif_path.unlink()
+            
+            logger.info(f"GIF generated successfully: {url}")
+            return url
+        
+        except Exception as e:
+            logger.error(f"Failed to generate GIF from frames: {str(e)}")
+            return None
+    
+    def _get_master_reference_path(self, character: Character, images: List[Dict] = None) -> Optional[str]:
+        """
+        Get Master Reference Image path for character consistency
+        
+        Priority:
+        1. Metadata master_reference_path
+        2. South direction image from character.images
+        3. South direction image from provided images list
+        
+        Args:
+            character: Character object
+            images: Optional list of image dicts (if already generated)
+        
+        Returns:
+            Master reference image path or None
+        """
+        from pathlib import Path
+        
+        # Priority 1: Check metadata for saved master reference path
+        if character.metadata and character.metadata.get('master_reference_path'):
+            master_path = character.metadata['master_reference_path']
+            master_path_obj = Path(master_path)
+            if master_path_obj.exists():
+                logger.info(f"Using Master Reference Image from metadata: {master_path}")
+                return master_path
+            else:
+                logger.warning(f"Master Reference Image in metadata not found: {master_path}")
+        
+        # Priority 2: Find south direction image from character.images
+        if character.images:
+            south_image = next(
+                (img for img in character.images 
+                 if (img.get('direction') == 'south' or img.get('angle') == 'south')),
+                None
+            )
+            if south_image and south_image.get('path'):
+                path_obj = Path(south_image.get('path'))
+                if path_obj.exists():
+                    logger.info(f"Using south direction image as Master Reference: {south_image.get('path')}")
+                    return south_image.get('path')
+        
+        # Priority 3: Find south direction image from provided images list
+        if images:
+            south_image = next(
+                (img for img in images 
+                 if (img.get('direction') == 'south' or img.get('angle') == 'south')),
+                None
+            )
+            if south_image and south_image.get('path'):
+                path_obj = Path(south_image.get('path'))
+                if path_obj.exists():
+                    logger.info(f"Using south direction image from images list as Master Reference: {south_image.get('path')}")
+                    return south_image.get('path')
+        
+        logger.warning(f"Master Reference Image not found for character: {character.id}")
+        return None
     
     def _extract_character_dna(self, form_data: Dict, image_size: int = 64) -> str:
         """

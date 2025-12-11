@@ -25,7 +25,7 @@ class CharacterRepository(BaseRepository):
     
     def update_status(self, character_id: str, status: str) -> Optional[Character]:
         """更新角色状态"""
-        valid_statuses = ['pending', 'generating', 'completed', 'failed']
+        valid_statuses = ['pending', 'generating', 'pending_save', 'completed', 'failed']
         if status not in valid_statuses:
             raise ValueError(f"Invalid status: {status}")
         return self.update(character_id, status=status)

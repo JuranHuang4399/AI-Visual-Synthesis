@@ -26,14 +26,14 @@ function CharactersPage() {
 
         const data = await response.json();
         
-        // Convert image URLs to full URLs
-        const charactersWithFullUrls = data.characters.map(char => ({
+        // Convert image URLs to full URLs (with safety check)
+        const charactersWithFullUrls = (data.characters || []).map(char => ({
           ...char,
-          images: char.images.map(img => ({
+          images: (char.images || []).map(img => ({
             ...img,
-            url: img.url.startsWith('http') 
+            url: img.url && img.url.startsWith('http') 
               ? img.url 
-              : `${apiUrl}${img.url.startsWith('/') ? '' : '/'}${img.url}`
+              : `${apiUrl}${img.url && img.url.startsWith('/') ? '' : '/'}${img.url || ''}`
           }))
         }));
         

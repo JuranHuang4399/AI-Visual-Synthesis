@@ -21,6 +21,3 @@ def story_generator(prompt):
     story = result.choices[0].message["content"]
 
     return story
-    #print(result.choices[0].message["content"])  #used for testing
-
-

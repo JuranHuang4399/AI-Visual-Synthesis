@@ -12,16 +12,7 @@ function CreateResultPage() {
   const [generatedData, setGeneratedData] = useState(null);
   const [lastFormData, setLastFormData] = useState(null); // Save last form data for regenerate
 
-  // Mock data for testing
-  const mockImages = [
-    { url: "https://via.placeholder.com/256x256/ff006e/ffffff?text=Frame+1" },
-    { url: "https://via.placeholder.com/256x256/bd00ff/ffffff?text=Frame+2" },
-    { url: "https://via.placeholder.com/256x256/00d9ff/ffffff?text=Frame+3" },
-    { url: "https://via.placeholder.com/256x256/ffea00/000000?text=Frame+4" },
-  ];
-
   const handleGenerate = async (formData) => {
-    console.log("Generating character with data:", formData);
     setIsGenerating(true);
     setLastFormData(formData); // Save form data
 
@@ -38,23 +29,28 @@ function CreateResultPage() {
           personality: formData.personality,
           appearance: formData.appearance,
           specialFeatures: formData.specialFeatures,
-          // imageCount is always 8 (8 directions)
+          imageCount: formData.imageCount || 4, // 1, 4, or 8
         }),
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to generate character');
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch (e) {
+          throw new Error(`Generation failed with status ${response.status}: ${response.statusText}`);
+        }
+        throw new Error(errorData.message || errorData.error || 'Failed to generate character');
       }
 
       const data = await response.json();
       
-      // Convert image URLs to full URLs (if API returns relative paths)
-      const images = data.images.map(img => ({
+      // Convert image URLs to full URLs (if API returns relative paths) (with safety check)
+      const images = (data.images || []).map(img => ({
         ...img,
-        url: img.url.startsWith('http') 
+        url: img.url && img.url.startsWith('http') 
           ? img.url 
-          : `${apiUrl}${img.url.startsWith('/') ? '' : '/'}${img.url}`
+          : `${apiUrl}${img.url && img.url.startsWith('/') ? '' : '/'}${img.url || ''}`
       }));
 
       setGeneratedData({
@@ -62,11 +58,27 @@ function CreateResultPage() {
         name: data.name,
         baseImage: data.baseImage || images[0], // Base image (for rotate character display)
         images: images,
-        story: data.story || '',
+        story: data.story?.content || data.story || '',
       });
     } catch (error) {
       console.error('Failed to generate character:', error);
-      alert(`Generation failed: ${error.message}`);
+      
+      // More detailed error information
+      let errorMessage = 'Generation failed';
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        errorMessage = 'Unable to connect to server. Please ensure the backend server is running (http://localhost:5000)';
+      } else if (error.message) {
+        errorMessage = `Generation failed: ${error.message}`;
+      } else {
+        errorMessage = `Generation failed: ${error.toString()}`;
+      }
+      
+      alert(errorMessage);
+      console.error('Full error details:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      });
     } finally {
       setIsGenerating(false);
     }
@@ -103,7 +115,7 @@ function CreateResultPage() {
         throw new Error(errorData.message || errorData.error || `Failed to save character (${response.status})`);
       }
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
       alert(`Character "${generatedData.name}" saved to gallery successfully!`);
       
       // Optional: Navigate to gallery page
@@ -176,10 +188,18 @@ function CreateResultPage() {
                   </div>
                 </div>
 
-                {/* 2. 8 Frames Grid */}
+                {/* 2. Direction Frames Grid - Dynamic based on image count */}
                 <div className="space-y-2">
-                  <h3 className="text-lg font-semibold text-cyber-cyan">8 Directions</h3>
-                  <div className="grid grid-cols-4 gap-2">
+                  <h3 className="text-lg font-semibold text-cyber-cyan">
+                    {generatedData.images?.length === 1 ? '1 Direction' : 
+                     generatedData.images?.length === 4 ? '4 Directions' : 
+                     generatedData.images?.length === 8 ? '8 Directions' : 
+                     `${generatedData.images?.length || 0} Directions`}
+                  </h3>
+                  <div className={`grid ${generatedData.images?.length === 1 ? 'grid-cols-1' : 
+                                         generatedData.images?.length === 4 ? 'grid-cols-2' : 
+                                         generatedData.images?.length === 8 ? 'grid-cols-4' : 
+                                         'grid-cols-2'} gap-2`}>
                     {generatedData.images && generatedData.images.length > 0 ? (
                       generatedData.images.map((image, index) => (
                         <div 
@@ -187,15 +207,18 @@ function CreateResultPage() {
                           className="aspect-square bg-cyber-dark-200 rounded-lg overflow-hidden neon-border-cyan"
                         >
                           <img 
-                            src={image.url} 
+                            src={image.url || ''} 
                             alt={`Direction ${index + 1}`}
                             className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                            }}
                           />
                         </div>
                       ))
                     ) : (
-                      // Display 8 placeholder slots
-                      Array.from({ length: 8 }).map((_, index) => (
+                      // Display placeholder slots based on expected count
+                      Array.from({ length: generatedData.images?.length || 4 }).map((_, index) => (
                         <div 
                           key={index}
                           className="aspect-square bg-cyber-dark-200 rounded-lg border-2 border-dashed border-gray-600 flex items-center justify-center"

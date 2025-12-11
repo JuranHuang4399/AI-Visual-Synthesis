@@ -28,12 +28,12 @@ function CharacterDetailPage() {
 
         const data = await response.json();
         
-        // Convert image URLs to full URLs
-        const imagesWithFullUrls = data.images.map(img => ({
+        // Convert image URLs to full URLs (with safety check)
+        const imagesWithFullUrls = (data.images || []).map(img => ({
           ...img,
-          url: img.url.startsWith('http') 
+          url: img.url && img.url.startsWith('http') 
             ? img.url 
-            : `${apiUrl}${img.url.startsWith('/') ? '' : '/'}${img.url}`
+            : `${apiUrl}${img.url && img.url.startsWith('/') ? '' : '/'}${img.url || ''}`
         }));
         
         setCharacter({
@@ -55,6 +55,11 @@ function CharacterDetailPage() {
   }, [id, navigate]);
 
   const handleDeleteCharacter = async () => {
+    if (!character || !character.name) {
+      alert('Character data not available');
+      return;
+    }
+    
     if (!window.confirm(`Are you sure you want to delete "${character.name}"? This action cannot be undone and will delete all images.`)) {
       return;
     }
@@ -152,12 +157,12 @@ function CharacterDetailPage() {
 
         const data = await response.json();
         
-        // Convert image URLs to full URLs
-        const imagesWithFullUrls = data.images.map(img => ({
+        // Convert image URLs to full URLs (with safety check)
+        const imagesWithFullUrls = (data.images || []).map(img => ({
           ...img,
-          url: img.url.startsWith('http') 
+          url: img.url && img.url.startsWith('http') 
             ? img.url 
-            : `${apiUrl}${img.url.startsWith('/') ? '' : '/'}${img.url}`
+            : `${apiUrl}${img.url && img.url.startsWith('/') ? '' : '/'}${img.url || ''}`
         }));
         
         setCharacter({
@@ -278,17 +283,26 @@ function CharacterDetailPage() {
                 </div>
               )}
               
-              {/* Direction Frames Grid - 2x4 layout */}
+              {/* Direction Frames Grid - Dynamic layout based on image count */}
               {character.images && character.images.length > 0 && (
                 <div className="mt-6 w-full">
                   <h4 className="text-md font-semibold text-cyber-cyan mb-3 text-center">Direction Frames</h4>
-                  <div className="grid grid-cols-4 gap-2">
-                    {/* Create 2x4 grid (2 rows x 4 cols) for 8 directions */}
+                  {/* Dynamic grid: 4 images = 2x2, 8 images = 2x4 */}
+                  <div className={`grid ${character.images.length === 4 ? 'grid-cols-2' : 'grid-cols-4'} gap-2`}>
+                    {/* Define all possible directions (8 directions) */}
                     {['north', 'north-east', 'east', 'south-east',
                       'south', 'south-west', 'west', 'north-west'].map((direction) => {
-                      const image = character.images.find(
+                      const image = (character.images || []).find(
                         img => img.direction === direction || img.angle === direction
                       );
+                      
+                      // Only render if image exists (for 4-image characters, only show the 4 that exist)
+                      if (!image && character.images.length === 4) {
+                        // For 4-image characters, only show north, east, south, west
+                        if (!['north', 'east', 'south', 'west'].includes(direction)) {
+                          return null;
+                        }
+                      }
                       
                       return (
                         <div 
@@ -347,7 +361,7 @@ function CharacterDetailPage() {
                   64x64px
                 </span>
                 <span className="px-3 py-1 bg-cyber-dark-100 rounded text-cyber-cyan">
-                  8 directions
+                  4 directions
                 </span>
                 <span className="px-3 py-1 bg-cyber-dark-100 rounded text-cyber-cyan">
                   low top-down view

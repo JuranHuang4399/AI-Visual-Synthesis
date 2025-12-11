@@ -15,11 +15,11 @@ class Character(Document):
     name = StringField(required=True, max_length=100)
     description = StringField(max_length=500, default='')
     
-    # Status: pending, generating, completed, failed
+    # Status: pending, generating, pending_save, completed, failed
     status = StringField(
         required=True,
         default='pending',
-        choices=['pending', 'generating', 'completed', 'failed']
+        choices=['pending', 'generating', 'pending_save', 'completed', 'failed']
     )
     
     # Input parameters (for regeneration)
