@@ -89,11 +89,17 @@ dmypy.json
 
 # Backend specific
 backend/__pycache__/
+backend/**/__pycache__/
 backend/*.pyc
+backend/**/*.pyc
 backend/logs/
 backend/*.log
 
 # Note: backend/storage/ is NOT ignored - it should be tracked in git
+# But ignore cache files in storage
+backend/storage/__pycache__/
+backend/storage/**/__pycache__/
+backend/storage/**/*.pyc
 
 # Node.js / Frontend
 node_modules/
