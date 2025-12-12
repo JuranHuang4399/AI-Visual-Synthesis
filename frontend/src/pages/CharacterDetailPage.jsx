@@ -14,7 +14,7 @@ function CharacterDetailPage() {
   useEffect(() => {
     const fetchCharacter = async () => {
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const apiUrl = import.meta.env.VITE_API_URL;
         const response = await fetch(`${apiUrl}/api/v1/characters/${id}`, {
           method: 'GET',
           headers: {
@@ -65,7 +65,7 @@ function CharacterDetailPage() {
     }
     
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const apiUrl = import.meta.env.VITE_API_URL;
       const response = await fetch(`${apiUrl}/api/v1/characters/${id}`, {
         method: 'DELETE',
         headers: {
@@ -88,7 +88,7 @@ function CharacterDetailPage() {
 
   const handleDownload = async (type) => {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const apiUrl = import.meta.env.VITE_API_URL;
       let url;
       
       switch(type) {
@@ -123,7 +123,7 @@ function CharacterDetailPage() {
 
   const handleDownloadDirection = async (direction) => {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const apiUrl = import.meta.env.VITE_API_URL;
       const url = `${apiUrl}/api/v1/characters/${id}/images/direction/${direction}`;
       
       // Create temporary link for download
@@ -143,7 +143,7 @@ function CharacterDetailPage() {
     // Re-fetch character data
     const fetchCharacter = async () => {
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const apiUrl = import.meta.env.VITE_API_URL;
         const response = await fetch(`${apiUrl}/api/v1/characters/${id}`, {
           method: 'GET',
           headers: {

@@ -12,7 +12,7 @@ function CharactersPage() {
   useEffect(() => {
     const fetchCharacters = async () => {
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const apiUrl = import.meta.env.VITE_API_URL;
         const response = await fetch(`${apiUrl}/api/v1/characters?status=completed`, {
           method: 'GET',
           headers: {

@@ -17,7 +17,7 @@ function CreateResultPage() {
     setLastFormData(formData); // Save form data
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const apiUrl = import.meta.env.VITE_API_URL;
       const response = await fetch(`${apiUrl}/api/v1/characters/generate`, {
         method: 'POST',
         headers: {
@@ -66,7 +66,7 @@ function CreateResultPage() {
       // More detailed error information
       let errorMessage = 'Generation failed';
       if (error.name === 'TypeError' && error.message.includes('fetch')) {
-        errorMessage = 'Unable to connect to server. Please ensure the backend server is running (http://localhost:5000)';
+        errorMessage = '"Unable to connect to server. Please check backend status.';
       } else if (error.message) {
         errorMessage = `Generation failed: ${error.message}`;
       } else {
@@ -96,7 +96,7 @@ function CreateResultPage() {
     }
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const apiUrl = import.meta.env.VITE_API_URL;
       const response = await fetch(`${apiUrl}/api/v1/characters/${generatedData.id}/save`, {
         method: 'POST',
         headers: {
@@ -127,7 +127,7 @@ function CreateResultPage() {
       // More detailed error information
       let errorMessage = 'Save failed';
       if (error.name === 'TypeError' && error.message.includes('fetch')) {
-        errorMessage = 'Unable to connect to server. Please ensure the backend server is running (http://localhost:5000)';
+        errorMessage = '"Unable to connect to server. Please check backend status.';
       } else if (error.message) {
         errorMessage = `Save failed: ${error.message}`;
       } else {
